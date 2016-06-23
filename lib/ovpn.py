@@ -19,7 +19,6 @@ from logger import *
 from config import Config
 from base import *
 
-# Change this if you want to use DH parameters of a different size
 DH_PARAM_SIZE = 4096
 
 def certcfg(cert_name, cert_type):
@@ -27,7 +26,7 @@ def certcfg(cert_name, cert_type):
  cert_cfg = config.getCertConfig()
  cert_cfg['commonName'] = "%s %s Cert" % (cert_type, cert_name)
 # cert_cfg['serial'] = 12345999 #need to add random numbers generator
- cert_cfg['serial'] = random.random() * 100000000
+ cert_cfg['serial'] = int(random.random() * 100000000)
  cert_cfg['cert_filename'] = cert_name + ".pem"
  cert_cfg['cert_key'] = cert_name + ".key"
  
@@ -35,61 +34,77 @@ def certcfg(cert_name, cert_type):
 
 def build_ca(server_ca,name):
     if os.path.isfile(server_ca['cert_filename']) and os.path.isfile(server_ca['cert_key']):
-        sys.stdout.write(colourise("Reusing "+server_ca['cert_filename']+" as the "+name+"\n",'0;36'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Reusing "+server_ca['cert_filename']+" as the "+name+"\n",'0;36'))
         ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file(server_ca['cert_filename']).read())
         ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, file(server_ca['cert_key']).read())
-        sys.stdout.write(colourise(" "+name+" Fingerprint: "+ca_cert.digest('sha1')+"\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise(" "+name+" Fingerprint: "+ca_cert.digest('sha1')+"\n", '0;32'))
     else:
-        sys.stdout.write(colourise("Generating new "+name+" CA...",'0;32'))
-        sys.stdout.flush()
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Generating new "+name+" CA...",'0;32'))
+#        sys.stdout.flush()
         ca_cert, ca_key = generate_ca(server_ca)
-        sys.stdout.write(colourise("..done\n",'0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("..done\n",'0;32'))
         open(server_ca['cert_filename'], "w").write(crypto.dump_certificate(crypto.FILETYPE_PEM, ca_cert))
         open(server_ca['cert_key'], "w").write(crypto.dump_privatekey(crypto.FILETYPE_PEM, ca_key))
-        sys.stdout.write(colourise(" Written PEM CA certificate to "+server_ca['cert_filename']+"\n", '0;32'))
-        sys.stdout.write(colourise(" Written PEM CA key to "+server_ca['cert_key']+"\n", '0;32'))
-        sys.stdout.write(colourise(" "+name+" Fingerprint: "+ca_cert.digest('sha1')+"\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise(" Written PEM CA certificate to "+server_ca['cert_filename']+"\n", '0;32'))
+#        sys.stdout.write(colourise(" Written PEM CA key to "+server_ca['cert_key']+"\n", '0;32'))
+#        sys.stdout.write(colourise(" "+name+" Fingerprint: "+ca_cert.digest('sha1')+"\n", '0;32'))
         os.chmod(server_ca['cert_key'], 0600)
     return ca_cert, ca_key
 
 def build_cert(config_cert,ca_cert,ca_key,name):
     if os.path.isfile(config_cert['cert_filename']) and os.path.isfile(config_cert['cert_key']):
-        sys.stdout.write(colourise("Reusing "+config_cert['cert_filename']+" as the "+name+" certificate\n",'0;36'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Reusing "+config_cert['cert_filename']+" as the "+name+" certificate\n",'0;36'))
         cert_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file(config_cert['cert_filename']).read())
         cert_key = crypto.load_privatekey(crypto.FILETYPE_PEM, file(config_cert['cert_key']).read())
-        sys.stdout.write(colourise(" SHA1 "+name+" Cert Fingerprint: "+cert_cert.digest('sha1')+"\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise(" SHA1 "+name+" Cert Fingerprint: "+cert_cert.digest('sha1')+"\n", '0;32'))
     else:
-        sys.stdout.write(colourise("Generating new "+name+" certificate...",'0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Generating new "+name+" certificate...",'0;32'))
         sys.stdout.flush()
         cert_req, cert_cert, cert_key = generate_certificate(config_cert,ca_cert,ca_key,name)
-        sys.stdout.write(colourise("..done\n",'0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("..done\n",'0;32'))
         open(config_cert['cert_filename'], "w").write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert_cert))
         open(config_cert['cert_key'], "w").write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cert_key))
-        sys.stdout.write(colourise(" Written PEM certificate to "+config_cert['cert_filename']+"\n", '0;32'))
-        sys.stdout.write(colourise(" Written private key to "+config_cert['cert_key']+"\n", '0;32'))
-        sys.stdout.write(colourise(" SHA1 "+name+" Cert Fingerprint: "+cert_cert.digest('sha1')+"\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise(" Written PEM certificate to "+config_cert['cert_filename']+"\n", '0;32'))
+#        sys.stdout.write(colourise(" Written private key to "+config_cert['cert_key']+"\n", '0;32'))
+#        sys.stdout.write(colourise(" SHA1 "+name+" Cert Fingerprint: "+cert_cert.digest('sha1')+"\n", '0;32'))
         os.chmod(config_cert['cert_key'], 0600)
     return cert_cert, cert_key
 
 def build_openssl_extra():
     if os.path.isfile('ta.key'):
-        sys.stdout.write(colourise("Reusing ta.key\n",'0;36'))
+     pass
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Reusing ta.key\n",'0;36'))
     else:
-        sys.stdout.write(colourise("Generating new HMAC key...\n",'0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Generating new HMAC key...\n",'0;32'))
         run_cmd(['openvpn','--genkey','--secret','ta.key'])
         os.chmod('ta.key', 0600)
-    sys.stdout.write("\n")
+#    sys.stdout.write("\n")
 
     if os.path.isfile('dh'+str(DH_PARAM_SIZE)+'.pem'):
-        sys.stdout.write(colourise("Reusing dh"+str(DH_PARAM_SIZE)+".pem\n",'0;36'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Reusing dh"+str(DH_PARAM_SIZE)+".pem\n",'0;36'))
+     pass
     else:
-        sys.stdout.write(colourise("Generating DH params...\n",'0;32'))
-        sys.stdout.write("\033[0;90m")
-        sys.stdout.flush()
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Generating DH params...\n",'0;32'))
+#        sys.stdout.write("\033[0;90m")
+#        sys.stdout.flush()
         run_cmd(['openssl','dhparam','-out','dh'+str(DH_PARAM_SIZE)+'.pem',str(DH_PARAM_SIZE)])
-        sys.stdout.write("\033[0;37m")
-    sys.stdout.write("\n")
-    sys.stdout.flush()
+#        sys.stdout.write("\033[0;37m")
+#    sys.stdout.write("\n")
+#    sys.stdout.flush()
 
 def run_cmd(cmd):
     popen = subprocess.Popen(cmd)
@@ -197,36 +212,47 @@ def generate_certificate(config_cert, ca, cakey, name):
     cert.sign(cakey, config_cert['hashalgorithm'])
     return req, cert, key
 
-def gen_ca(cert_cfg, name):
+def gen_ca(cert_cfg, name, ovpn_path):
     cert_cfg['cert_filename'] = "ca.pem"
     cert_cfg['cert_key'] = "ca.key"
+    os.chdir( ovpn_path )
     ca_cert, ca_key = build_ca(cert_cfg, name)
     return ca_cert, ca_key
 
-def gen_cert(cert_cfg, certype, name):
+def gen_cert(cert_cfg, certype, name, ovpn_path):
     ca_cert = ''
     ca_key = ''
     cert_cert = ''
     cert_key = ''
+    client_key_path = ovpn_path + '/easy-rsa/keys/'
+    retval = os.getcwd()
+
     # Build the Server and Client CA (if they do not already exist)
     if certype == 'ca':
-     ca_cert, ca_key = gen_ca(cert_cfg, 'CA')
-     sys.stdout.write("\n")
+     ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path)
+#     sys.stdout.write("\n")
     # Build the server and client certificate (signed by the above CAs)
     elif certype == 'server' or certype == 'client':
-      ca_cert, ca_key = gen_ca(cert_cfg, 'CA')
-      cert_cfg['cert_filename'] = name + ".pem"
-      cert_cfg['cert_key'] = name + ".key"
+      ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path)
+      if certype == 'server':
+       cert_cfg['cert_filename'] = 'server' + ".pem"
+       cert_cfg['cert_key'] = 'server' + ".key"
+       os.chdir( ovpn_path )
+      else:
+       cert_cfg['cert_filename'] = name + ".pem"
+       cert_cfg['cert_key'] = name + ".key"
+       os.chdir( client_key_path )
       cert_cert, cert_key = build_cert(cert_cfg, ca_cert, ca_key, certype)
-      sys.stdout.write("\n")
+#      sys.stdout.write("\n")
     else:
-     print "Unknown certificate type, exiting"
+###@ Need to replace to logg.error
+#     print "Unknown certificate type, exiting"
      sys.exit(2)
     return ca_cert, ca_key, cert_cert, cert_key
 
-def gen_server_config(path, DH_PARAM_SIZE):
+def gen_server_config(DH_PARAM_SIZE):
  # Build the server config file
-        server_config = open(path + 'server.conf', 'w')
+        server_config = open('server.conf', 'w')
         server_config.write("port 1194\n")
         server_config.write("proto tcp\n")
         server_config.write("dev tun\n")
@@ -235,9 +261,9 @@ def gen_server_config(path, DH_PARAM_SIZE):
         server_config.write("key server.key\n")
         server_config.write("dh dh"+str(DH_PARAM_SIZE)+".pem\n")
         server_config.write("server 10.0.0.0 255.0.0.0\n")
-        server_config.write("topology net30\n")
+#        server_config.write("topology net30\n")
         server_config.write("ifconfig-pool-persist ipp.txt\n")
-        server_config.write("client-config-dir \/etc\/openvpn\/staticlients\n")		
+        server_config.write("client-config-dir /etc/openvpn/staticlients\n")		
         server_config.write("keepalive 10 120\n")
         server_config.write("cipher AES-128-CBC\n")
         server_config.write("persist-key\n")
@@ -245,29 +271,41 @@ def gen_server_config(path, DH_PARAM_SIZE):
         server_config.write("status openvpn-status.log\n")
         server_config.close()
         # Inform the user
-        sys.stdout.write(colourise("Example configs written to example.server.conf and example.client.conf\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Config written to server.conf\n", '0;32'))
 
-def gen_client_config(path, name, srv_ip):
+def gen_client_config(name, srv_ip):
  # Build the client config file
-        client_config = open(path + name + 'conf', 'w')
+        client_config = open(name + '.conf', 'w')
         client_config.write("client\n")
         client_config.write("dev tun\n")
         client_config.write("proto tcp\n")
-        client_config.write("remote %s 1194\n") % srv_ip
+        client_config.write("remote ")
+        client_config.write(srv_ip)
+        client_config.write(" 1194\n")
         client_config.write("resolv-retry infinite\n")
         client_config.write("nobind\n")
         client_config.write("persist-key\n")
         client_config.write("persist-tun\n")
         client_config.write("ca ca.pem\n")
-        client_config.write("cert %s.pem\n") % name
-        client_config.write("key %s.key\n") % name
+        client_config.write("cert ")
+        client_config.write(name)
+        client_config.write(".pem\n")
+        client_config.write("key ")
+        client_config.write(name)
+        client_config.write(".key\n")
         client_config.write("cipher AES-128-CBC\n")
         client_config.close()
         # Inform the user
-        sys.stdout.write(colourise("Example configs written to example.server.conf and example.client.conf\n", '0;32'))
+###@ Need to replace to logg.info
+#        sys.stdout.write(colourise("Config written to <client_name>.conf\n", '0;32'))
 
-def gen_staticlients(path, name, address, server):
-        static_path = path + '/staticlients/'
+def gen_staticlients(name, address, server):
+        static_path = 'staticlients/'        
         static_config = open(static_path + name, 'w')
-        static_config.write("ifconfig-push %s %s") % (address, server)
+        static_config.write("ifconfig-push ")
+        static_config.write(address)
+        static_config.write(" ")
+        static_config.write(server)
+        static_config.write("\n")
         static_config.close()
