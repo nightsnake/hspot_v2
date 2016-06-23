@@ -27,7 +27,10 @@ ovpn_path = '/home/snake/hotspot2/etc/openvpn'
 ovpn_srv = '10.0.0.1'
 
 def instructions():
-    # Now give instructions
+    """
+    Show short instructions about certificates
+    """    
+
     sys.stdout.write(colourise("On the OpenVPN Server:\n",'0;40'))
     sys.stdout.write(colourise("ca ca.pem\n",'0;32'))
     sys.stdout.write(colourise("cert server.pem\n",'0;32'))
@@ -40,7 +43,9 @@ def instructions():
     sys.stdout.write("\n")
 
 def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
-#function for external calls (unattended)
+    """
+    function for external calls (unattended)
+    """
     client_key_path = ovpn_path + '/easy-rsa/keys/'
     retval = os.getcwd()
 
@@ -80,6 +85,9 @@ def help():
     pass
 
 def main(argv):
+    """
+    Main call. Interactive output
+    """
     cert_cfg = {}
     certname = ''
     certype = ''
