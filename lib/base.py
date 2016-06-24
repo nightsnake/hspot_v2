@@ -5,7 +5,7 @@
 # Copyright 2016 (c) Snake, <snake@nixman.info> @night_snake
 ##----------------------------------------------------------------------
 
-import os,sys
+import os,sys,inspect
 import tarfile
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
 if cmd_subfolder not in sys.path:
@@ -51,14 +51,8 @@ def mkdir (directory, logger):
     if not os.path.exists(directory):
      try:
       os.makedirs(directory)
-     except OSError, o:
-      logger.warning("Failed to create directory: " + spot.name + ": " + o)
-     except SystemError, s:
-      logger.warning("Failed to create directory: " + spot.name + ": " + s)
-     except RuntimeError, e:
-      logger.warning("Failed to create directory: " + spot.name + ": " + e)
-     except:
-      logger.warning("Failed to create directory: " + spot.name)
+     except Exception as e:
+      logger.warning("Failed to create directory %s: %s" % (spot.name, e))
     return directory
 
 if __name__ == "__main__":
