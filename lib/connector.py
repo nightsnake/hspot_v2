@@ -9,12 +9,22 @@
 import os, sys
 from RosAPI import Core
 
-def connectToMikrotik(ip, login, password):
- c = Core(ip)
- c.login (login, password)
- return c
+def connectToMikrotik(ip, login, password, logger):
+ try: 
+  c = Core(ip)
+  c.login (login, password)
+ except Exception as e:
+  logger.error("Can't connect to device: %s" % e)
+  return 0
+ else:
+  return c
 
-def connectDevice(ip, login, password, type):
- if type eq 'mkt':
-  c = connectToMikrotik(ip, login, password)
- return c
+def connectDevice(ip, login, password, type, logger):
+ try:
+  if type eq 'mkt':
+   c = connectToMikrotik(ip, login, password)
+ except Exception as e:
+  logger.error("Can't connect to device: %s" % e)
+  return 0
+ else:
+  return c
