@@ -10,17 +10,30 @@ import os, sys
 #if cmd_subfolder not in sys.path:
 # sys.path.insert(0, cmd_subfolder)
 import logging	
+from config import Config
+
 
 class logger():
 
 # logging.basicConfig(format = u'%(levelname)-4s [%(asctime)s] %(message)s', level = logging.DEBUG, filename = u'hotspot.log')
- def __init__(self, topic, loglevel):
-  base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-  log_path = "../var/log/"
+ def __init__(self, topic, verbose=0):
+  base_dir = os.getcwd()
+#Load vars from config
+  config = Config()
+  log_cfg = config.getLogConfig()
+  level = log_cfg['level']
+###@ Need some better
+  path = "../" + log_cfg['path']
   self.topic = topic
-  self.loglevel = loglevel
-  logfile = os.path.join(base_dir, log_path)+topic+".log"
-  logging.basicConfig(format = u'%(levelname)-4s [%(asctime)s] %(message)s', level = loglevel, filename = logfile)
+
+  if verbose:
+   self.loglevel = logging.getLevelName('DEBUG')
+  else:
+   self.loglevel = logging.getLevelName(level.upper())
+
+  logfile = os.path.join(base_dir, path)+topic+".log"
+#  logging.setLevel(self.loglevel)
+  logging.basicConfig(format = u'%(levelname)-4s [%(asctime)s] %(message)s', level=self.loglevel, filename = logfile)
 #  level = logging.setLevel(loglevel)
 
  def debug(self, msg):
@@ -44,7 +57,8 @@ class logger():
    logging.critical( msg )
 
 def main ():
-    pass
+###@ Need to change text to description about methods of class logger()
+    print "Logging module by Snake (c) 2016"
 
 if __name__ == "__main__":
     sys.exit(main())

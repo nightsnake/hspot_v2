@@ -16,7 +16,7 @@ if cmd_subfolder not in sys.path:
 from logger import *
 from string import Template
 from config import Config
-from devices import *
+from db_devices import *
 from base import *
 from gen_ovpn import ovpn_generator
 
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
      try:
       id = sys.argv[1]
-      logger = logger("config", 10)
+      logger = logger("hs-generator")
       logger.debug("Hotspot ID: " + id)
       makeConfig(id, logger)
      except Exception as e:

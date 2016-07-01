@@ -9,7 +9,7 @@ import os, sys, inspect
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
 if cmd_subfolder not in sys.path:
  sys.path.insert(0, cmd_subfolder)
-from logger import *
+#from logger import *
 
 class Config():
  import ConfigParser
@@ -49,14 +49,20 @@ class Config():
     cert_cfg['keyfilesize'] = self.config.get('certificate', 'keyfilesize')
     cert_cfg['hashalgorithm'] = self.config.get('certificate', 'hashalgorithm')
     return cert_cfg
-      
+
+ def getLogConfig(self):
+    log_cfg = {}
+    log_cfg['level'] = self.config.get('log', 'log_level')
+    log_cfg['path'] = self.config.get('log', 'log_path')  
+    return log_cfg
+
 if __name__ == "__main__":
     print "Only module format allowed"
-    print "Project: "+Config.project
-    print "Server: "+Config.server_ip
-    print "OVPN: "+Config.ovpn_ip    
-    print "FTP: "+Config.ftp_ip
-    print "FTP: "+Config.ftp_user
-    print "FTP: "+Config.ftp_password
-    print "Site: "+Config.site
+#    print "Project: "+Config.project
+#    print "Server: "+Config.server_ip
+#    print "OVPN: "+Config.ovpn_ip    
+#    print "FTP: "+Config.ftp_ip
+#    print "FTP: "+Config.ftp_user
+#    print "FTP: "+Config.ftp_password
+#    print "Site: "+Config.site
     sys.exit()
