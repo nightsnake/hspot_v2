@@ -20,6 +20,7 @@ def connectToMikrotik(ip, login, password, logger):
   return c
 
 def connectDevice(ip, login, password, type, logger):
+ c = ''
  try:
   if type eq 'mkt':
    c = connectToMikrotik(ip, login, password)
