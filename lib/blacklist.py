@@ -16,9 +16,9 @@ def clearBlackList(c, logger):
    c.response_handler(c.talk(["/ip/proxy/access/remove", "=.id="+entry['.id']]))
  except Exception as e:
   logger.error("Can't clear blacklist, Unexpected error: %s" % e)
-  return 0
- else:
   return 1
+ else:
+  return 0
  
 
 def setBlackList(c, hspot, blacklist, logger):
@@ -41,9 +41,9 @@ def setBlackList(c, hspot, blacklist, logger):
    c.response_handler(c.talk(["/ip/proxy/access/add", "=action=deny", "=disabled=no", "=dst-host="+site.site]))
  except Exception as e:
   logger.error("Can't fill up blacklist, Unexpected error: %s" % e)
-  return 0
- else:
   return 1
+ else:
+  return 0
 
 
 def checkProxy(hspot, logger):
@@ -62,8 +62,12 @@ def checkProxy(hspot, logger):
     setBlackList(c, hspot, blacklist, logger)
   except Exception as e:
    logger.error("Unexpected error: %s" % e)
+   return 1
+  else:
+   return 0
  else:
   logger.waring("Device %s is offine. Skipping..." % hspot.name)
+  return 1
 
 if __name__ == "__main__":
  print "Only as a module"
