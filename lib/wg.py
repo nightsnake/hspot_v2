@@ -114,7 +114,7 @@ def setSocialSettings(wg, wg_social, social_status, c, logger):
  else:
   return 0
 
-def checkWG(hspot, logger):
+def setWG(hspot, logger):
  t = devices_propertiesAction()
  wg_social = []
  if hspot.status:
@@ -137,6 +137,7 @@ def checkWG(hspot, logger):
    # Write to device 
    # Must return 1 if success
    setSocialSettings(wg, wg_social, social_status, c, logger)
+   # Return 0 if OK
    return 0
   except Exception as e:
    logger.error("Unexpected error: %s" % e)

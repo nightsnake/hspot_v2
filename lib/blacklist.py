@@ -46,7 +46,7 @@ def setBlackList(c, hspot, blacklist, logger):
   return 0
 
 
-def checkProxy(hspot, logger):
+def setProxy(hspot, logger):
  b = blacklistAction()
 
  if hspot.status:
