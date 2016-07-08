@@ -70,6 +70,11 @@ class devAction():
             acthspot = session.query(devTable).filter_by(id=id).one()
             acthspot.new = 1
             session.commit()
+#Set device as done
+        def devSetDone(self, id):
+            acthspot = session.query(devTable).filter_by(id=id).one()
+            acthspot.new = 0
+            session.commit()
 #Set 'online' (current users, connected to wifi)
         def devSetOnline(self, id, current_users):
             modhspot = session.query(devTable).filter_by(id=id).one()
