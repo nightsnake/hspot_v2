@@ -37,6 +37,7 @@ def getHspotSettings(srv_cfg, spot):
     http_url = "http://cp." + site
     wifi_url = "wifi." + site
 
+###@ Need to add support for user defined networks
     network = spot.network + '.0'
     hsgw = spot.network + '.1'
     hsranbgn = spot.network + '.2'

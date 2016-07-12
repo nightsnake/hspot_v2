@@ -74,7 +74,7 @@ def setSSID(c, hspot, ap, logger):
   return 1
 #return ssid
 
-def setFreq(c, hspot):
+def setFreq(c, ap, hspot):
  wifi_string = "/interface/wireless/print"
  #Set settings for Mikrotik AP
  try:
@@ -105,7 +105,7 @@ def setWiFi(hspot, logger):
     c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
     passwd = setPassword(c, hspot, ap, logger)
     ssid = setSSID(c, hspot, ap, logger)
-    freq = setFreq(c, hspot, ap, logger)
+    freq = setFreq(c, ap, logger)
     # Return 0 if OK
     return 0
    except Exception as e:
