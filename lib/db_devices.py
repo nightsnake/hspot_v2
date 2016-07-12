@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
+# Category: DB
 # Table and methods for table 'devices'
 # Copyright (C) Snake, 2015
 ##----------------------------------------------------------------------
@@ -30,6 +31,7 @@ class devTable(Base):
         login = Column(String(32))
         password = Column(String(32))
         network = Column(String(32))
+        service_wifi = Column(Boolean, default=False)
         service_ssid = Column(String(32))
         service_hide = Column(Boolean, default=False)
         service_encryption  = Column(Boolean, default=False)        
@@ -38,10 +40,12 @@ class devTable(Base):
         last_live = Column(TIMESTAMP)
         creat_date = Column(TIMESTAMP)
         comment = Column(String(256))
+        done = Column(Integer)
         new = Column(Boolean, default=False)
         current_users = Column(Integer)
         url_archive = Column(String(255))
-        def __init__(self, name, ip, gw, server, secret, ssid, login, password, network, site, comment):
+        type = Column(String(10))
+        def __init__(self, name, ip, gw, server, secret, s_wifi, ssid, login, password, network, site, comment, type):
                 self.name = name
                 self.ip = ip
                 self.gw = gw
@@ -53,10 +57,11 @@ class devTable(Base):
                 self.network = network
                 self.site = site
                 self.comment = comment
+                self.type = type
         def __repr__(self):
-                return "<devTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)>" % \
-                       (self.id, self.name, self.ip, self.gw, self.status, self.server, self.secret, self.ssid, self.service_ssid, self.service_hide, self.service_encryption, self.service_pass,
-                        self.login, self.password, self.network, self.site, self.last_live, self.creat_date, self.current_users, self.comment, self.url_archive)
+                return "<devTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)>" % \
+                       (self.id, self.name, self.ip, self.gw, self.status, self.server, self.secret, self.service_wifi, self.ssid, self.service_ssid, self.service_hide, self.service_encryption, self.service_pass,
+                        self.login, self.password, self.network, self.site, self.last_live, self.creat_date, self.current_users, self.comment, self.url_archive, self.type)
 
 class devAction():
 ### 'Set' functions
@@ -73,8 +78,14 @@ class devAction():
 #Set device as done
         def devSetDone(self, id):
             acthspot = session.query(devTable).filter_by(id=id).one()
+            acthspot.done = 0
+            session.commit()
+#Unset 'New' mark from device
+        def devUnSetNew(self, id):
+            acthspot = session.query(devTable).filter_by(id=id).one()
             acthspot.new = 0
             session.commit()
+
 #Set 'online' (current users, connected to wifi)
         def devSetOnline(self, id, current_users):
             modhspot = session.query(devTable).filter_by(id=id).one()

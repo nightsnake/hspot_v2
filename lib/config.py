@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# get config from file
+# Category: base functions
+# Will get configuration from file
 # Copyright (C) Snake, 2016
 ##----------------------------------------------------------------------
 

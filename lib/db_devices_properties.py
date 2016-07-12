@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
+# Category: DB
 # Table and methods for table 'devices_properties'
 # Copyright (C) Snake, 2015
 ##----------------------------------------------------------------------

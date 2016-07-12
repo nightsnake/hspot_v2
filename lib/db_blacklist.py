@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
+# Category: DB
 # Table and methods for table 'black_sites'
 # Copyright (C) Snake, 2015
 ##----------------------------------------------------------------------

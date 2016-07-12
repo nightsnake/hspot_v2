@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# HSpot checking module
-# Will check settings: WG, Proxy, FW, WiFi, mac_access, user profiles
+# Category: setter, checker
+# Will check settings: Blacklist (proxy settings)
 # Copyright 2016 (c) Snake, <snake@nixman.info> @night_snake
 ##----------------------------------------------------------------------
 

@@ -69,7 +69,8 @@ def getHspotSettings(srv_cfg, spot):
            'service_hide':s_hide, 
            'service_encryption':s_enc, 
            'service_pass':s_pass, 
-           'wifi_url':wifi_url}
+           'wifi_url':wifi_url
+           }
     
     return key_path, http_url, cfg
 

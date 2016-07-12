@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
+# Category: generator
 # OpenVPN config and keys generator
 # This will generate OpenVPN config and keys.
 # Based on OpenVPN keys and config generator by Stuart Morgan <stuart.morgan@mwrinfosecurity.com>

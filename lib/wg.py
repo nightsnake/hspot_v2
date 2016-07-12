@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# module for checking WG settings
+# Category: setter, checker
+# Will check settings: walled garden (captive portal and social login)
 # Copyright 2016 (c) Snake, <snake@nixman.info> @night_snake
 ##----------------------------------------------------------------------
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# Database module base.py
+# Category: DB
+# Database module
 # Copyright (C) Snake, 2015
 ##----------------------------------------------------------------------
 from sqlalchemy import create_engine

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# Connector
-# Make ssh connects to devices and return pointer
+# Category: base functions
+# Make ssh/api connect to devices and return pointer
 # Copyright (C) Snake, 2016 http://nixman.info
 ##----------------------------------------------------------------------
 

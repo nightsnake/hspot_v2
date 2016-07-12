@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
+# Category: base functions
 # Make a text banner, colorize text, etc
 # Copyright 2016 (c) Snake, <snake@nixman.info> @night_snake
 ##----------------------------------------------------------------------
