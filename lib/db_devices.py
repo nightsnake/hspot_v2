@@ -22,6 +22,7 @@ class devTable(Base):
         __tablename__ = 'devices'
         id = Column(Integer, primary_key=True)
         name = Column(String(32))
+        project = Column(String(32))
         ip = Column(String(32))
         gw = Column(String(32))
         status = Column(Boolean, default=False)
@@ -45,8 +46,9 @@ class devTable(Base):
         current_users = Column(Integer)
         url_archive = Column(String(255))
         type = Column(String(10))
-        def __init__(self, name, ip, gw, server, secret, s_wifi, ssid, login, password, network, site, comment, type):
+        def __init__(self, name, project, ip, gw, server, secret, s_wifi, ssid, login, password, network, site, comment, type):
                 self.name = name
+                self.project = project
                 self.ip = ip
                 self.gw = gw
                 self.server = server
@@ -59,8 +61,8 @@ class devTable(Base):
                 self.comment = comment
                 self.type = type
         def __repr__(self):
-                return "<devTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)>" % \
-                       (self.id, self.name, self.ip, self.gw, self.status, self.server, self.secret, self.service_wifi, self.ssid, self.service_ssid, self.service_hide, self.service_encryption, self.service_pass,
+                return "<devTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)>" % \
+                       (self.id, self.name, self.project, self.ip, self.gw, self.status, self.server, self.secret, self.service_wifi, self.ssid, self.service_ssid, self.service_hide, self.service_encryption, self.service_pass,
                         self.login, self.password, self.network, self.site, self.last_live, self.creat_date, self.current_users, self.comment, self.url_archive, self.type)
 
 class devAction():
