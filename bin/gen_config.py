@@ -50,7 +50,7 @@ def getHspotSettings(srv_cfg, spot):
     name = spot.name
     password = spot.password
     s_enable = spot.service_wifi and "yes" or "no"
-    s_ssid = spot.service_sid
+    s_ssid = spot.service_ssid
     s_hide = spot.service_hide and "yes" or "no"
     s_enc = spot.service_encryption
     s_pass = spot.service_pass
