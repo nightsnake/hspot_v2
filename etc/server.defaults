@@ -18,6 +18,12 @@ ftp_ip = 127.0.0.1
 ftp_user = ftp
 ftp_password = ftpassword
 site = example.com
+domain = example.com
 hspot_path = /opt/hotspot/
 key_path = /opt/hotspot/var/
 cfg_path = /var/www/vhosts/cp.example.com/cfg
+
+[log]
+log_path = var/log
+log_level = debug
+
