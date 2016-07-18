@@ -24,6 +24,6 @@ key_path = /opt/hotspot/var/
 cfg_path = /var/www/vhosts/cp.example.com/cfg
 
 [log]
-log_path = var/log
+log_path = var/log/
 log_level = debug
 
