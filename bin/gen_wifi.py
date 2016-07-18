@@ -28,9 +28,11 @@ def genApConfig(logger, id=0):
    try:
     # make connection to device (by api)
     c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
+    hs_wifi = setHspotWiFi(c, hspot, ap, logger)
     passwd = setPassword(c, hspot, ap, logger)
     ssid = setSSID(c, hspot, ap, logger)
     freq = setFreq(c, ap, logger)
+    service = setServiceWiFi(c, hspot, ap, logger)
     # Return 0 if OK
     return 0
    except Exception as e:

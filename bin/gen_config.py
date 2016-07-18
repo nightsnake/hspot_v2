@@ -8,6 +8,7 @@
 
 import os, sys, inspect, getopt
 import subprocess
+import ipaddr
 
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
 if cmd_subfolder not in sys.path:
@@ -19,6 +20,7 @@ from config import Config
 from db_devices import *
 from base import *
 from gen_ovpn import ovpn_generator
+
 
 def getHspotSettings(srv_cfg, spot):
     cfg = {}
@@ -37,18 +39,18 @@ def getHspotSettings(srv_cfg, spot):
     http_url = "http://cp." + site
     wifi_url = "wifi." + site
 
-###@ Need to add support for user defined networks
-    network = spot.network + '.0'
-    hsgw = spot.network + '.1'
-    hsranbgn = spot.network + '.2'
-    hsranend = spot.network + '.254'
+    network = ipaddr.IPv4Network(spot.network)
+    hsgw = network[1]
+    hsranbgn = network[2]
+    hsranend = network[-2]
     gw = spot.gw
     ssid = spot.ssid
     radius = spot.server
     secret = spot.secret
     name = spot.name
     password = spot.password
-    s_ssid = spot.service_ssid
+    s_enable = spot.service_wifi and "yes" or "no"
+    s_ssid = spot.service_sid
     s_hide = spot.service_hide and "yes" or "no"
     s_enc = spot.service_encryption
     s_pass = spot.service_pass
@@ -66,6 +68,7 @@ def getHspotSettings(srv_cfg, spot):
            'url':ftp_url, 
            'ftp_user':ftp_user, 
            'ftp_password':ftp_password,
+           'service_wifi':s_enable,
            'service_ssid':s_ssid, 
            'service_hide':s_hide, 
            'service_encryption':s_enc, 

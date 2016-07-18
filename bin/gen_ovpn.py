@@ -23,6 +23,7 @@ from OpenSSL import crypto
 
 
 DH_PARAM_SIZE = 4096
+###@Need to move to cfg
 ovpn_path = '/home/snake/hotspot2/etc/openvpn'
 ovpn_srv = '10.0.0.1'
 
