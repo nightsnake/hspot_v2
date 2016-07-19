@@ -68,8 +68,12 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
    wlans = c.response_handler(c.talk([wifi_string])) #Get list with wifi ifaces
    profiles = c.response_handler(c.talk([profile_string]))
    hs_wlan = filter(lambda hs_wlan_name: hs_wlan_name['name'] == hs_ap_name, wlans)   
+#Check security profiles
    if not filter(lambda profile: profile['name'] == service_profile, profiles):
-    makeProfile(c, hspot, ap, logger)
+    if makeProfile(c, hspot, ap, logger):
+     return 1
+    else:
+     setProfile(c, hspot, ap, logger)
    else:
     logger.debug("Security profile already exist on %s" % ap.name)
     setProfile(c, hspot, ap, logger)
@@ -100,7 +104,31 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
   return 1
 
 def makeProfile(c, hspot, ap, logger):
- pass
+ """
+ Make service security profile
+ """
+ profile_string = "/interface/wireless/security-profiles/print"
+ profile_add_string = "/interface/wireless/security-profiles/add"
+ service_profile = 'hs-ap-prof-service'
+ try:
+  if ap.type eq 'mkt':
+   profiles = c.response_handler(connect.talk([profile_string]))
+   if default_profile = filter(lambda profile: profile['name'] == 'default', profiles):
+    p = c.response_handler(connect.talk([profile_add_string,
+                                                            "=name="+service_profile,
+                                                            "copy-from="+default_profile[0]['.id']
+                                        ]))
+    logger.debug("Security profile created successfull on %s" % ap.name)
+    return 0
+   else:
+    logger.error("Unexpected error: default wireless security profile not found on %s" % ap.name)
+    return 1
+  else:
+   logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
+   return 0
+ except Exception as e:
+  logger.error("Unexpected error: %s" % e)
+  return 1
 
 def setProfile(c, hspot, ap, logger):
  try:
@@ -112,7 +140,7 @@ def setProfile(c, hspot, ap, logger):
    for profile in profiles:
 #Disable cipher for public hotspot network
     if 'default' in profile['name']:
-     p1 = connect.response_handler(connect.talk([profile_set_string, 
+     p1 = c.response_handler(connect.talk([profile_set_string, 
                                                 "=.id="+profile['.id'],
                                                 "=mode=none",
                                                 "=authentication-types=",
@@ -123,7 +151,7 @@ def setProfile(c, hspot, ap, logger):
                                                 ]))
     elif 'hs-ap-prof-service' in profile['name']:
      if hspot.service_encryption and hspot.service_wifi:      
-      p1 = connect.response_handler(connect.talk([profile_set_string, 
+      p1 = c.response_handler(connect.talk([profile_set_string, 
                                                  "=.id="+profile['.id'], 
                                                  "=wpa-pre-shared-key="+hspot.service_pass, 
                                                  "=wpa2-pre-shared-key="+hspot.service_pass,
@@ -133,7 +161,7 @@ def setProfile(c, hspot, ap, logger):
                                                  "=group-ciphers=tkip,aes-ccm",
                                                  ]))
      else:
-      p1 = connect.response_handler(connect.talk([profile_set_string, 
+      p1 = c.response_handler(connect.talk([profile_set_string, 
                                                  "=.id="+profile['.id'],
                                                  "=mode=none",
                                                  "=authentication-types=",
