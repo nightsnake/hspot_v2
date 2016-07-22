@@ -18,15 +18,33 @@ from connector import *
 from config import Config
 
 
+def setExternalAP(h, hspot, ap, srv_cfg, wlan_port, logger):
+ pass
+
+def addPortToBridge(c, device, port, bridge, logger):
+#Universal func for adding port to bridge
+ try:
+  if device.type eq 'mkt': #check AP type
+   br = c.response_handler(c.talk([""/interface/bridge/port/add",
+                                                              "=interface="+port,
+                                                              "=bridge="+bridge,
+                                ]))
+  else:
+   logger.warning("Unknown AP type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("Unexpected error: %s" % e)
+  return 1
+
 def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
-#Set hspot wifi interface
+#Set access point wireless settings
  wlans = []
  wifi_string = "/interface/wireless/print"
  profile_string = "/interface/wireless/security-profiles/print"
  hs_ap_name = 'hs-ap-'+srv_cfg['project']
  hs_br_name = 'hs-br-'+srv_cfg['project']
  try:
-  if ap.type eq 'mkt':
+  if ap.type eq 'mkt': #check AP type
    wlans = c.response_handler(c.talk([wifi_string]))
    profiles = c.response_handler(c.talk([profile_string]))
 
@@ -38,12 +56,12 @@ def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
                                                                "=name="+hs_ap_name,
                                                                "=disabled=n",
                                                                "=ssid="+hspot.ssid,
+                                                               "=mode=ap-bridge", 
+                                                               "=wireless-protocol=802.11",
                                                                "=security-profile="+default_profile[0]['name'],
                                      ]))
-    s_br = c.response_handler(c.talk([""/interface/bridge/port/add",
-                                                                  "=interface="+hs_ap_name,
-                                                                  "=bridge="+hs_br_name,
-                                     ]))
+#Add wireless interface to hspot bridge. Will be applied to AP
+    addPortToBridge(c, ap, hs_ap_name, hs_br_name, logger)
     logger.debug("Hotspot WLAN successfully added to device %s" % (ap.name))
     return 0
    else:
@@ -64,7 +82,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
  profile_string = "/interface/wireless/security-profiles/print"
  wifi_string = "/interface/wireless/print"
  try:
-  if ap.type eq 'mkt':
+  if ap.type eq 'mkt' and ap.port == 0: #Service WiFi available only if AP placed on the hspot device
    wlans = c.response_handler(c.talk([wifi_string])) #Get list with wifi ifaces
    profiles = c.response_handler(c.talk([profile_string]))
    hs_wlan = filter(lambda hs_wlan_name: hs_wlan_name['name'] == hs_ap_name, wlans)   
@@ -86,10 +104,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
                                                                   "=ssid="+hspot.ssid, 
                                                                   "=security-profile="+service_profile,
                                      ]))    
-    s_br = c.response_handler(c.talk([""/interface/bridge/port/add",
-                                                                  "=interface="+service_wifi,
-                                                                  "=bridge="+hs_br_name,
-                                         ]))
+    addPortToBridge(c, hspot, service_wifi, hs_br_name, logger)
     logger.debug("Service WLAN added to device %s" % hspot.name)
     return 0    
    else:
@@ -97,7 +112,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
     setProfile(c, hspot, ap, logger)
     return 0
   else:
-   logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
+   logger.warning("Unknown AP type %s for %s (or external AP detected)" % (ap.type, ap.name))
    return 0
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
@@ -239,13 +254,19 @@ def setWiFi(hspot, logger):
  #Load vars from config
  config = Config()
  srv_cfg = config.getServerConfig()
-
+ wlan_port = config.getWlanConfig()
  aps = p.getAPByHspotId(hspot.id)
+
  for ap in aps:
   if ap.status:
    try:
     # make connection to device (by api)
     c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
+    h = connectDevice(hspot.ip, hspot.login, hspot.password, hspot.type, logger)
+
+    if ap.port:
+    #Prepare hspot to connect external ap
+     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, wlan_port, logger)
     hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, logger)
     service = setServiceWiFi(c, hspot, ap, srv_cfg, logger)
 
