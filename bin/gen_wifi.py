@@ -21,28 +21,24 @@ def genApConfig(logger, id=0):
  a = devAction()
  p = access_pointsAction()
  if id:
-  ap = p.getAPById(id)
+  aps = [p.getAPById(id)]
+ else:
+  aps = p.getAPAlive()
+ for ap in aps: 
   hs_id = p.getHspotIdByAP(id)
   hspot = a.devGetById(hs_id)
   if ap.status:
    try:
-    # make connection to device (by api)
-    c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
-    hs_wifi = setHspotWiFi(c, hspot, ap, logger)
-    passwd = setPassword(c, hspot, ap, logger)
-    ssid = setSSID(c, hspot, ap, logger)
-    freq = setFreq(c, ap, logger)
-    service = setServiceWiFi(c, hspot, ap, logger)
+    setWiFi(hspot, logger)
     # Return 0 if OK
     return 0
    except Exception as e:
     logger.error("Unexpected error: %s" % e)
     return 1
   else:
-   logger.error("Device %s is offline, skipping..." % e)
+   logger.warning("Device %s is offline, skipping..." % e)
    return 0
- else:
-  pass
+   
 
 #Set WiFi AP settings by its ID
 if __name__ == "__main__":

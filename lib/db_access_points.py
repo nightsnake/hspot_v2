@@ -61,6 +61,10 @@ class access_pointsAction():
         def getAPById(self, id):
             ap = session.query(access_pointsTable).filter_by(id=id).one()
             return ap
+#Get list of alive devices
+        def getAPAlive(self):
+            aliveap = session.query(access_pointsTable).filter_by(status=1).all()
+            return aliveap
 
 #Set device status to online or offline
         def setApStatus(self, id, status):

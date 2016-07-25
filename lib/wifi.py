@@ -7,6 +7,7 @@
 ##----------------------------------------------------------------------
 
 import os, sys, inspect
+import ipaddr
 
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
 if cmd_subfolder not in sys.path:
@@ -19,7 +20,33 @@ from config import Config
 
 
 def setExternalAP(h, hspot, ap, srv_cfg, wlan_port, logger):
- pass
+ try:
+  if hspot.type eq 'mkt': #check AP type
+   port = wlan_port[ap.port]
+   hs_br_name = 'hs-br-'+srv_cfg['project']
+   addPortToBridge(h, hspot, port, hs_br_name, logger)
+   addAddressToInt(h, hspot, hs_br_name, ap.gw, logger)
+  else:
+   logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
+   return 0
+ except Exception as e:
+  logger.error("Unexpected error: %s" % e)
+  return 1  
+
+def addAddressToInt(c, device, port, address, logger):
+ try:
+  if device.type eq 'mkt': #check AP type
+###@need to add check for existing address
+   ip = c.response_handler(c.talk([""/ip/address/add",
+                                                              "=address="+address,
+                                                              "=interface="+port,
+                                ]))
+  else:
+   logger.warning("Unknown AP type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("Unexpected error: %s" % e)
+  return 1
 
 def addPortToBridge(c, device, port, bridge, logger):
 #Universal func for adding port to bridge
