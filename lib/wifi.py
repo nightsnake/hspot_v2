@@ -19,13 +19,12 @@ from connector import *
 from config import Config
 
 
-def setExternalAP(h, hspot, ap, srv_cfg, wlan_port, logger):
+def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
  try:
   if hspot.type eq 'mkt': #check AP type
-   port = wlan_port[ap.port]
-   hs_br_name = 'hs-br-'+srv_cfg['project']
-   addPortToBridge(h, hspot, port, hs_br_name, logger)
-   addAddressToInt(h, hspot, hs_br_name, ap.gw, logger)
+   port = ports[ap.port]
+   addPortToBridge(h, hspot, port, bridges['hspot'], logger)
+   addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0
@@ -63,13 +62,11 @@ def addPortToBridge(c, device, port, bridge, logger):
   logger.error("Unexpected error: %s" % e)
   return 1
 
-def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
+def setHspotWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
 #Set access point wireless settings
  wlans = []
  wifi_string = "/interface/wireless/print"
  profile_string = "/interface/wireless/security-profiles/print"
- hs_ap_name = 'hs-ap-'+srv_cfg['project']
- hs_br_name = 'hs-br-'+srv_cfg['project']
  try:
   if ap.type eq 'mkt': #check AP type
    wlans = c.response_handler(c.talk([wifi_string]))
@@ -80,7 +77,7 @@ def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
    if default_interface and default_profile:
     s_ap = c.response_handler(c.talk(["/interface/wireless/set",
                                                                "=id="+default_interface[0]['.id']
-                                                               "=name="+hs_ap_name,
+                                                               "=name="+interfaces['hspot'],
                                                                "=disabled=n",
                                                                "=ssid="+hspot.ssid,
                                                                "=mode=ap-bridge", 
@@ -88,7 +85,7 @@ def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
                                                                "=security-profile="+default_profile[0]['name'],
                                      ]))
 #Add wireless interface to hspot bridge. Will be applied to AP
-    addPortToBridge(c, ap, hs_ap_name, hs_br_name, logger)
+    addPortToBridge(c, ap, interfaces['hspot'], bridges['hspot'], logger)
     logger.debug("Hotspot WLAN successfully added to device %s" % (ap.name))
     return 0
    else:
@@ -101,10 +98,7 @@ def setHspotWiFi(c, hspot, ap, srv_cfg, logger):
   logger.error("Unexpected error: %s" % e)
   return 1
  
-def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
- hs_ap_name = 'hs-ap-'+srv_cfg['project']
- hs_br_name = 'hs-bridge'
- service_wifi = 'hs-ap-service'
+def setServiceWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
  service_profile = 'hs-ap-prof-service'
  profile_string = "/interface/wireless/security-profiles/print"
  wifi_string = "/interface/wireless/print"
@@ -112,7 +106,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
   if ap.type eq 'mkt' and ap.port == 0: #Service WiFi available only if AP placed on the hspot device
    wlans = c.response_handler(c.talk([wifi_string])) #Get list with wifi ifaces
    profiles = c.response_handler(c.talk([profile_string]))
-   hs_wlan = filter(lambda hs_wlan_name: hs_wlan_name['name'] == hs_ap_name, wlans)   
+   hs_wlan = filter(lambda hs_wlan_name: hs_wlan_name['name'] == interfaces['hspot'], wlans)   
 #Check security profiles
    if not filter(lambda profile: profile['name'] == service_profile, profiles):
     if makeProfile(c, hspot, ap, logger):
@@ -123,15 +117,15 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, logger):
     logger.debug("Security profile already exist on %s" % ap.name)
     setProfile(c, hspot, ap, logger)
 #If no any service wlans   
-   if not filter(lambda wlan: wlan['name'] == service_wifi, wlans):
+   if not filter(lambda wlan: wlan['name'] == interfaces['service'], wlans):
     s_ap = c.response_handler(c.talk(["/interface/wireless/add", 
-                                                                  "=name="+service_wifi,
+                                                                  "=name="+interfaces['service'],
                                                                   "=master-interface="+hs_wlan[0][".id"], 
                                                                   "=disabled=n", 
                                                                   "=ssid="+hspot.ssid, 
                                                                   "=security-profile="+service_profile,
                                      ]))    
-    addPortToBridge(c, hspot, service_wifi, hs_br_name, logger)
+    addPortToBridge(c, hspot, interfaces['service'], bridges['service'], logger)
     logger.debug("Service WLAN added to device %s" % hspot.name)
     return 0    
    else:
@@ -222,22 +216,20 @@ def setProfile(c, hspot, ap, logger):
   logger.error("Unexpected error: %s" % e)
   return 1
 
-def setSSID(c, hspot, ap, srv_cfg, logger):
+def setSSID(c, hspot, ap, srv_cfg, interface, logger):
  wlans = []
  ssid = ''
  wifi_string = "/interface/wireless/print"
- service_wifi = 'hs-ap-service'
- hs_ap_name = 'hs-ap-'+srv_cfg['project']
  #Set settings for Mikrotik AP
  try:
   if ap.type eq 'mkt':
    wlans = c.response_handler(c.talk([wifi_string]))
    for wlan in wlans:
    # Set hotspot AP, not service AP (based on default mkt adapter)
-    if hs_ap_name == wlan['name']:
+    if interface['hspot'] == wlan['name']:
      w = c.response_handler(c.talk(["/interface/wireless/set", "=.id="+wlan['.id'], "=ssid="+hspot.ssid, ]))
     #Set service_wifi AP
-    elif service_wifi == wlan['name'] and hspot.service_wifi:
+    elif interface['service'] == wlan['name'] and hspot.service_wifi:
      hide-ssid = hspot.service_hide and "yes" or "no"      
      w = c.response_handler(c.talk(["/interface/wireless/set", "=.id="+wlan['.id'], "=ssid="+hspot.service_ssid, "=hide-ssid="+hide-ssid,]))
     else:
@@ -251,14 +243,13 @@ def setSSID(c, hspot, ap, srv_cfg, logger):
   return 1
 #return ssid
 
-def setFreq(c, ap, srv_cfg, hspot):
+def setFreq(c, ap, srv_cfg, interface, hspot):
  wifi_string = "/interface/wireless/print"
- hs_ap_name = 'hs-ap-'+srv_cfg['project']
  #Set settings for Mikrotik AP
  try:
   if ap.type eq 'mkt':
    wlans = c.response_handler(c.talk([wifi_string]))
-   if wlan = filter(lambda w: w['name'] == hs_ap_name, wlans)   
+   if wlan = filter(lambda w: w['name'] == interface['hspot'], wlans)   
     w = c.response_handler(c.talk(["/interface/wireless/set", "=.id="+wlan[0]['.id'], "=frequency="+ap.freq, ]))
     return 0
    else:
@@ -281,7 +272,7 @@ def setWiFi(hspot, logger):
  #Load vars from config
  config = Config()
  srv_cfg = config.getServerConfig()
- wlan_port = config.getWlanConfig()
+ wlans, bridges, ports = config.getWlanConfig()
  aps = p.getAPByHspotId(hspot.id)
 
  for ap in aps:
@@ -293,13 +284,13 @@ def setWiFi(hspot, logger):
 
     if ap.port:
     #Prepare hspot to connect external ap
-     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, wlan_port, logger)
-    hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, logger)
-    service = setServiceWiFi(c, hspot, ap, srv_cfg, logger)
+     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
+    hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, logger)
+    service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, logger)
 
     passwd = setProfile(c, hspot, ap, srv_cfg, logger)
-    ssid = setSSID(c, hspot, ap, srv_cfg, logger)
-    freq = setFreq(c, ap, srv_cfg, logger)
+    ssid = setSSID(c, hspot, ap, srv_cfg, wlans, logger)
+    freq = setFreq(c, ap, srv_cfg, wlans, logger)
     # Return 0 if OK
     return 0
    except Exception as e:

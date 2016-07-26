@@ -27,3 +27,14 @@ cfg_path = /var/www/vhosts/cp.example.com/cfg
 log_path = var/log/
 log_level = debug
 
+[interfaces]
+port0 = hs-ap-service
+port1 = ether1
+port2 = ehter2
+port3 = ether3
+port4 = ether4
+port5 = ether5
+hs_bridge = hs-br-changeme
+sr_bridge = hs-bridge
+hs_ap = hs-ap-changeme
+sr_ap = hs-ap-service

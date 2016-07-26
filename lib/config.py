@@ -58,14 +58,18 @@ class Config():
     return log_cfg
 
  def getWlanConfig(self):
-    wlan_port = {}
-    wlan_port['0'] = self.config.get('wlan', 'port0')
-    wlan_port['1'] = self.config.get('wlan', 'port1')
-    wlan_port['2'] = self.config.get('wlan', 'port2')
-    wlan_port['3'] = self.config.get('wlan', 'port3')
-    wlan_port['4'] = self.config.get('wlan', 'port4')
-    wlan_port['5'] = self.config.get('wlan', 'port5')
-    return wlan_port
+    ports = {}
+    ports['0'] = self.config.get('interfaces', 'port0')
+    ports['1'] = self.config.get('interfaces', 'port1')
+    ports['2'] = self.config.get('interfaces', 'port2')
+    ports['3'] = self.config.get('interfaces', 'port3')
+    ports['4'] = self.config.get('interfaces', 'port4')
+    ports['5'] = self.config.get('interfaces', 'port5')
+    bridges['hspot'] = self.config.get('interfaces', 'hs_bridge')
+    bridges['service'] = self.config.get('interfaces', 'sr_bridge')
+    wlans['hspot'] = self.config.get('interfaces', 'hs_ap')
+    wlans['service'] = self.config.get('interfaces', 'sr_ap')
+    return wlans, bridges, ports
 
 if __name__ == "__main__":
     print "Only module format allowed"
