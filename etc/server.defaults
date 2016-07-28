@@ -38,3 +38,9 @@ hs_bridge = hs-br-changeme
 sr_bridge = hs-bridge
 hs_ap = hs-ap-changeme
 sr_ap = hs-ap-service
+
+[openvpn]
+DH_PARAM_SIZE = 4096
+ovpn_path = /etc/openvpn
+ovpn_srv = 10.0.0.1
+

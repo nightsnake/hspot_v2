@@ -77,6 +77,14 @@ class Config():
   else:
     return (wlans, bridges, ports)
 
+ def getOVPNConfig(self):
+  ovpn_cfg = {}
+  ovpn_cfg['DH_PARAM_SIZE'] = self.config.get('openvpn','DH_PARAM_SIZE')
+  ovpn_cfg['ovpn_path'] = self.config.get('openvpn','ovpn_path')
+  ovpn_cfg['ovpn_srv'] = self.config.get('openvpn','ovpn_srv')
+
+  return ovpn_cfg
+  
 if __name__ == "__main__":
     print "Only module format allowed"
 #    print "Project: "+Config.project

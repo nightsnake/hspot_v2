@@ -20,9 +20,13 @@ from logger import *
 from config import Config
 from base import *
 
-DH_PARAM_SIZE = 4096
+def ovpncfg():
+    config = Config()
+    ovpn_cfg = {}
+    ovpn_cfg = config.getOVPNConfig()
+    return ovpn_cfg
 
-def certcfg(cert_name, cert_type):
+def certcfg(cert_name, cert_type, logger):
  config = Config()
  cert_cfg = config.getCertConfig()
  cert_cfg['commonName'] = "%s %s Cert" % (cert_type, cert_name)
@@ -81,7 +85,7 @@ def build_cert(config_cert,ca_cert,ca_key,name):
         os.chmod(config_cert['cert_key'], 0600)
     return cert_cert, cert_key
 
-def build_openssl_extra():
+def build_openssl_extra(DH_PARAM_SIZE):
     if os.path.isfile('ta.key'):
      pass
 ###@ Need to replace to logg.info
@@ -213,14 +217,14 @@ def generate_certificate(config_cert, ca, cakey, name):
     cert.sign(cakey, config_cert['hashalgorithm'])
     return req, cert, key
 
-def gen_ca(cert_cfg, name, ovpn_path):
+def gen_ca(cert_cfg, name, ovpn_path, logger):
     cert_cfg['cert_filename'] = "ca.pem"
     cert_cfg['cert_key'] = "ca.key"
     os.chdir( ovpn_path )
     ca_cert, ca_key = build_ca(cert_cfg, name)
     return ca_cert, ca_key
 
-def gen_cert(cert_cfg, certype, name, ovpn_path):
+def gen_cert(cert_cfg, certype, name, ovpn_path, logger):
     ca_cert = ''
     ca_key = ''
     cert_cert = ''
@@ -230,11 +234,11 @@ def gen_cert(cert_cfg, certype, name, ovpn_path):
 
     # Build the Server and Client CA (if they do not already exist)
     if certype == 'ca':
-     ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path)
+     ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path, logger)
 #     sys.stdout.write("\n")
     # Build the server and client certificate (signed by the above CAs)
     elif certype == 'server' or certype == 'client':
-      ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path)
+      ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path, logger)
       if certype == 'server':
        cert_cfg['cert_filename'] = 'server' + ".pem"
        cert_cfg['cert_key'] = 'server' + ".key"
@@ -275,7 +279,7 @@ def gen_server_config(DH_PARAM_SIZE):
 ###@ Need to replace to logg.info
 #        sys.stdout.write(colourise("Config written to server.conf\n", '0;32'))
 
-def gen_client_config(name, srv_ip):
+def gen_client_config(name, srv_ip, logger):
  # Build the client config file
         client_config = open(name + '.conf', 'w')
         client_config.write("client\n")
@@ -301,7 +305,7 @@ def gen_client_config(name, srv_ip):
 ###@ Need to replace to logg.info
 #        sys.stdout.write(colourise("Config written to <client_name>.conf\n", '0;32'))
 
-def gen_staticlients(name, address, server):
+def gen_staticlients(name, address, server, logger):
         static_path = 'staticlients/'        
         static_config = open(static_path + name, 'w')
         static_config.write("ifconfig-push ")
