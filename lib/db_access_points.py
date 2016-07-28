@@ -50,7 +50,7 @@ class access_pointsTable(Base):
             self.port = port
 
         def __repr__(self):
-            return "<devices_propertiesTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)>" % 
+            return "<devices_propertiesTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)>" % \
                                             (self.id, self.ip, self.gw, self.login, self.password, self.hs_id, self.comment, self.freq, self.type, self.port)
 class access_pointsAction():
 #Get settings by hotspot ID
@@ -75,6 +75,11 @@ class access_pointsAction():
         def setApOnline(self, id, online):
             setonline = session.query(access_pointsTable).filter_by(id=id).one()
             setonline.current_users = current_users
+            session.commit()
+#Set done
+        def setApDone(self, id, done):
+            setdone = session.query(access_pointsTable).filter_by(id=id).one()
+            setdone.done = done
             session.commit()
 
         def getHspotIdByAP(self, id):

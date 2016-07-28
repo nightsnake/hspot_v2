@@ -22,8 +22,8 @@ def connectToMikrotik(ip, login, password, logger):
 def connectDevice(ip, login, password, type, logger):
  c = ''
  try:
-  if type eq 'mkt':
-   c = connectToMikrotik(ip, login, password)
+  if type == 'mkt':
+   c = connectToMikrotik(ip, login, password, logger)
  except Exception as e:
   logger.error("Can't connect to device: %s" % e)
   return 0

@@ -29,8 +29,11 @@ def genApConfig(logger, id=0):
   hspot = a.devGetById(hs_id)
   if ap.status:
    try:
-    setWiFi(hspot, logger)
-    # Return 0 if OK
+    done = setWiFi(hspot, logger)
+    p.setApDone(id, done)
+#      else:
+###need to set smth if error
+#Return 0 if OK
     return 0
    except Exception as e:
     logger.error("Unexpected error: %s" % e)
@@ -49,6 +52,10 @@ if __name__ == "__main__":
       logger = logger("hs-ap-config")
       logger.debug("AP ID: " + id)
       genApConfig(logger, id)
+      if not done:
+       setApDone(id, 1)
+#      else:
+###need to set smth if error
      except Exception as e:
       logger.warning("Unexpected error: %s" % e)
       sys.stderr.write("Error: %s\n" % e)

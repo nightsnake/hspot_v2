@@ -58,7 +58,10 @@ class Config():
     return log_cfg
 
  def getWlanConfig(self):
-    ports = {}
+  ports = {}
+  bridges = {}
+  ports = {}
+  try:
     ports['0'] = self.config.get('interfaces', 'port0')
     ports['1'] = self.config.get('interfaces', 'port1')
     ports['2'] = self.config.get('interfaces', 'port2')
@@ -69,7 +72,10 @@ class Config():
     bridges['service'] = self.config.get('interfaces', 'sr_bridge')
     wlans['hspot'] = self.config.get('interfaces', 'hs_ap')
     wlans['service'] = self.config.get('interfaces', 'sr_ap')
-    return wlans, bridges, ports
+  except Exception as e:
+    logger.warning("[Config] Can't load settings from config: %s" % e)
+  else:
+    return (wlans, bridges, ports)
 
 if __name__ == "__main__":
     print "Only module format allowed"
