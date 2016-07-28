@@ -22,7 +22,8 @@ from config import Config
 def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
  try:
   if hspot.type == 'mkt': #check AP type
-   port = ports[ap.port]
+   port = ports[str(ap.port)]
+   logger.debug("Preparing hspot %s for external AP in port %s" % (hspot.name, port))
    addPortToBridge(h, hspot, port, bridges['hspot'], logger)
    addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
   else:
@@ -41,7 +42,7 @@ def addAddressToInt(c, device, port, address, logger):
                                                               "=interface="+port,
                                 ]))
   else:
-   logger.warning("Unknown AP type %s for %s" % (device.type, device.name))
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
    return 0
  except Exception as e:
   logger.error("[addAddressToInt] Unexpected error: %s" % e)
@@ -56,9 +57,9 @@ def addPortToBridge(c, device, port, bridge, logger):
                                                               "=bridge="+bridge,
                                 ]))
 
-   logger.debug("Interface was successfully added to device %s" % (device.name))
+   logger.debug("Interface %s was successfully added to bridge %s on device %s" % (port, bridge, device.name))
   else:
-   logger.warning("Unknown AP type %s for %s" % (device.type, device.name))
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
    return 0
  except Exception as e:
   logger.error("[addPortToBridge] Unexpected error: %s" % e)
@@ -269,7 +270,7 @@ def setFreq(c, ap, srv_cfg, interface, logger):
 
 #return freq
 
-def setWiFi(hspot, logger):
+def setWiFi(ap, logger):
  # Check not hspots, but access points
  a = devAction()
  t = devices_propertiesAction()
@@ -287,18 +288,21 @@ def setWiFi(hspot, logger):
  except Exception as e:
   logger.error("[setWiFi] Can't load config: %s" % e)
   return 1
- aps = p.getAPByHspotId(hspot.id)
+
+ hs_id = p.getHspotIdByAP(ap.id)
+ hspot = a.devGetById(hs_id)
+
+ aps = [ap]
 
  for ap in aps:
-  if ap.status:
+  if ap.status and ap.done != 1:
    try:
     # make connection to device (by api)
     c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
     h = connectDevice(hspot.ip, hspot.login, hspot.password, hspot.type, logger)
 
+    logger.debug("AP %s in port %s" % (ap.name, ap.port))
     if ap.port > 0:
-    #Prepare hspot to connect external ap
-     logger.debug("Prepare hotspot for external AP")
      ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
     hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
     service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
@@ -312,11 +316,12 @@ def setWiFi(hspot, logger):
     logger.error("[setWiFi] unexpected error: %s" % e)
     return -1
   else:
-   logger.waring("Device %s (hspot %s) is offine. Skipping..." % (ap.name, hspot.name))
+   logger.warning("Device %s (hspot %s) is offline or already done. Skipping..." % (ap.name, hspot.name))
    return 0
 
 if __name__ == "__main__":
 ###@Need to add help()
  print "Only as a module"
  sys.exit()
+
 

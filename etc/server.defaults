@@ -30,7 +30,7 @@ log_level = debug
 [interfaces]
 port0 = hs-ap-service
 port1 = ether1
-port2 = ehter2
+port2 = ether2
 port3 = ether3
 port4 = ether4
 port5 = ether5

@@ -18,30 +18,29 @@ from logger import *
 from wifi import *
 
 def genApConfig(logger, id=0):
+ aps = []
  a = devAction()
  p = access_pointsAction()
  if id:
   aps = [p.getAPById(id)]
  else:
   aps = p.getAPAlive()
- for ap in aps: 
-  hs_id = p.getHspotIdByAP(id)
-  hspot = a.devGetById(hs_id)
+ for ap in aps:
   if ap.status:
    try:
-    done = setWiFi(hspot, logger)
+    done = setWiFi(ap, logger)
     p.setApDone(id, done)
 #      else:
 ###need to set smth if error
-#Return 0 if OK
-    return 0
-   except Exception as e:
-    logger.error("Unexpected error: %s" % e)
+
+   # Return 1 if OK
     return 1
+   except Exception as e:
+    logger.error("[genApConfig] Unexpected error: %s" % e)
+    return -1
   else:
    logger.warning("Device %s is offline, skipping..." % e)
-   return 0
-   
+
 
 #Set WiFi AP settings by its ID
 if __name__ == "__main__":
@@ -52,12 +51,8 @@ if __name__ == "__main__":
       logger = logger("hs-ap-config")
       logger.debug("AP ID: " + id)
       genApConfig(logger, id)
-      if not done:
-       setApDone(id, 1)
-#      else:
-###need to set smth if error
      except Exception as e:
-      logger.warning("Unexpected error: %s" % e)
+      logger.warning("[Main] Unexpected error: %s" % e)
       sys.stderr.write("Error: %s\n" % e)
       sys.exit(1)
      else:

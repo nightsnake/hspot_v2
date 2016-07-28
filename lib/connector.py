@@ -14,7 +14,7 @@ def connectToMikrotik(ip, login, password, logger):
   c = Core(ip)
   c.login (login, password)
  except Exception as e:
-  logger.error("Can't connect to device: %s" % e)
+  logger.error("[connectToMikrotik] Can't connect to device: %s" % e)
   return 0
  else:
   return c
@@ -25,7 +25,7 @@ def connectDevice(ip, login, password, type, logger):
   if type == 'mkt':
    c = connectToMikrotik(ip, login, password, logger)
  except Exception as e:
-  logger.error("Can't connect to device: %s" % e)
+  logger.error("[connectDevice] Can't connect to device: %s" % e)
   return 0
  else:
   return c
