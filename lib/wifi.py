@@ -25,13 +25,16 @@ def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
    port = ports[str(ap.port)]
    logger.debug("Preparing hspot %s for external AP in port %s" % (hspot.name, port))
    addPortToBridge(h, hspot, port, bridges['hspot'], logger)
-   addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
+   if (ap.address == ap.gw):    
+    addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
+   else:
+    logger.warning("Netmasks for gw and address are not match. Please check settings")
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0
  except Exception as e:
   logger.error("[setExternalAP] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def addAddressToInt(c, device, port, address, logger):
  try:
@@ -46,7 +49,7 @@ def addAddressToInt(c, device, port, address, logger):
    return 0
  except Exception as e:
   logger.error("[addAddressToInt] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def addPortToBridge(c, device, port, bridge, logger):
 #Universal func for adding port to bridge
@@ -63,7 +66,7 @@ def addPortToBridge(c, device, port, bridge, logger):
    return 0
  except Exception as e:
   logger.error("[addPortToBridge] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def setHspotWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
 #Set access point wireless settings
@@ -94,13 +97,13 @@ def setHspotWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
     return 0
    else:
     logger.error("[setHspotWiFi] Unexpected error: default wlan interface or security profile not found on %s" % ap.name)
-    return 1
+    return -1
   else:
    logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
    return 0
  except Exception as e:
   logger.error("[setHspotWiFi] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def setServiceWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
  service_profile = 'hs-ap-prof-service'
@@ -113,8 +116,8 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
    hs_wlan = filter(lambda hs_wlan_name: hs_wlan_name['name'] == interfaces['hspot'], wlans)
 #Check security profiles
    if not filter(lambda profile: profile['name'] == service_profile, profiles):
-    if makeProfile(c, hspot, ap, logger):
-     return 1
+    if (makeProfile(c, hspot, ap, logger) == -1):
+     return -1
     else:
      setProfile(c, hspot, ap, logger)
    else:
@@ -131,7 +134,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
                                      ]))
     addPortToBridge(c, hspot, interfaces['service'], bridges['service'], logger)
     logger.debug("Service WLAN added to device %s" % hspot.name)
-    return 0
+    return 1
    else:
     logger.warning("Service wlan already exist on %s" % ap.name)
     setProfile(c, hspot, ap, logger)
@@ -141,7 +144,7 @@ def setServiceWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
    return 0
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def makeProfile(c, hspot, ap, logger):
  """
@@ -160,16 +163,16 @@ def makeProfile(c, hspot, ap, logger):
                                                             "copy-from="+default_profile[0]['.id']
                                         ]))
     logger.debug("Security profile created successfull on %s" % ap.name)
-    return 0
+    return 1
    else:
     logger.error("Unexpected error: default wireless security profile not found on %s" % ap.name)
-    return 1
+    return -1
   else:
    logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
    return 0
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def setProfile(c, hspot, ap, logger):
  try:
@@ -213,13 +216,13 @@ def setProfile(c, hspot, ap, logger):
                                                  ]))
     else:
      logger.warning("Unknown wireless security profile %s on %s" % (profile['name'], ap.name))
-   return 0
+   return 1
   else:
    logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
    return 0
  except Exception as e:
   logger.error("[setProfile] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 def setSSID(c, hspot, ap, srv_cfg, interface, logger):
  wlans = []
@@ -245,7 +248,7 @@ def setSSID(c, hspot, ap, srv_cfg, interface, logger):
    return 0
  except Exception as e:
   logger.error("[setSSID] Unexpected error: %s" % e)
-  return 1
+  return -1
 #return ssid
 
 def setFreq(c, ap, srv_cfg, interface, logger):
@@ -260,13 +263,13 @@ def setFreq(c, ap, srv_cfg, interface, logger):
     return 0
    else:
     logger.error("HotSpot AP not found on %s" % (ap.name))
-    return 1
+    return -1
   else:
    logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
    return 0
  except Exception as e:
   logger.error("[setFreq] Unexpected error: %s" % e)
-  return 1
+  return -1
 
 #return freq
 
@@ -287,7 +290,7 @@ def setWiFi(ap, logger):
   logger.debug("loaded: ports %s bridges %s wlans %s" % (ports['0'], bridges['hspot'], wlans['hspot']))
  except Exception as e:
   logger.error("[setWiFi] Can't load config: %s" % e)
-  return 1
+  return -1
 
  hs_id = p.getHspotIdByAP(ap.id)
  hspot = a.devGetById(hs_id)

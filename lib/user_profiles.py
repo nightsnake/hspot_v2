@@ -36,14 +36,14 @@ def setProfileById(profile_id):
                                                            "=keepalive-timeout="+b_profile.dead_timeout,
                                                            "=idle-timeout="+b_profile.idle_timeout,
                                                            "=rate-limit="+rate]))
-   return 0
+   return 1
   else:
    logger.warning("Device %s is offline, skipping..." % hspot.name)
    return 0
 
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
-  return 1
+  return -1
 
 # Delete profile. Only by profile ID
 # Not used now. Need to add another starting point
@@ -63,13 +63,13 @@ def delProfileById(profile_id, logger):
                                                                   "=keepalive-timeout=2m",
                                                                   "=idle-timeout=none",
                                                                   "=rate-limit="+""]))
-      return 0
+      return 1
      else:
       logger.warning("Device %s is offline, skipping..." % hspot.name)
       return 0
     except Exception as e:
      logger.error("Unexpected error: %s" % e)
-     return 1
+     return -1
 
 # Set profile by hspot ID (set all profiles for defined hspot)
 def setUserProfile(hspot, logger):
@@ -83,7 +83,7 @@ def setUserProfile(hspot, logger):
   return 0
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
-  return 1     
+  return -1 
 
 if __name__ == "__main__":
 ###@Need to add help()

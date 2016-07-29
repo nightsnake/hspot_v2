@@ -95,7 +95,7 @@ def delUsers(id):
 def setIpBinding(hspot, logger):
  u = macAction()
  a = devAction()
-
+###@Something strange... need to check deeply
  try:
   mac_users = u.getUsersbyDevice(hspot.id)
   for user in mac_users:
@@ -105,7 +105,7 @@ def setIpBinding(hspot, logger):
   return 0
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
-  return 1  
+  return -1
 
 if __name__ == "__main__":
 ###@Need to add help()

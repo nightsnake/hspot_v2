@@ -25,8 +25,7 @@ def getCNASettings(c, logger):
   return cna_apple, cna_android, cna_win
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
- else: 
-  return 0
+  return -1
 
 def setCNASettings(cna_apple, cna_android, cna_win, wg, c):
  try:
@@ -46,6 +45,7 @@ def setCNASettings(cna_apple, cna_android, cna_win, wg, c):
   return 1
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
+  return -1
  else:
   return 0
 
@@ -77,6 +77,7 @@ def getSocialSettings(c, social, logger):
   return wg_social, social_status
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
+  return -1
  else:
   return 0
 
@@ -112,6 +113,7 @@ def setSocialSettings(wg, wg_social, social_status, c, logger):
   return 1
  except Exception as e:
   logger.error("Unexpected error: %s" % e)
+  return -1
  else:
   return 0
 
@@ -139,13 +141,13 @@ def setWG(hspot, logger):
    # Must return 1 if success
    setSocialSettings(wg, wg_social, social_status, c, logger)
    # Return 0 if OK
-   return 0
+   return 1
   except Exception as e:
    logger.error("Unexpected error: %s" % e)
-   return 1
+   return -1
  else:
   logger.waring("Device %s is offine. Skipping..." % hspot.name)
-  return 1
+  return 0
 
 if __name__ == "__main__":
 ###@Need to add help()
