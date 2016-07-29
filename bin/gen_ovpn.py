@@ -97,6 +97,7 @@ def main(argv, logger):
     ovpn_cfg = ovpncfg()
     ovpn_path = ovpn_cfg['ovpn_path']
     ovpn_srv = ovpn_cfg['ovpn_srv']
+    key_outpath = ovpn_cfg['key_outpath']
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
     client_key_path = ovpn_path + '/easy-rsa/keys/'
 
@@ -142,6 +143,11 @@ def main(argv, logger):
      os.chdir( ovpn_path )
      if certype == 'client' and cli_ip:
       gen_staticlients(cert_cfg['commonName'], cli_ip, ovpn_srv, logger)
+      logger.debug("Copying certificate and key to user folder")
+      inpath = ovpn_path
+      outpath = key_outpath + '/' + certname
+      copyFile(certname + '.pem', inpath, outpath)
+      copyFile(certname + '.key', inpath, outpath)
       build_openssl_extra(DH_PARAM_SIZE)
       sys.stdout.write("\n")
       # Get some manual to user

@@ -56,6 +56,12 @@ def mkdir (directory, logger):
       logger.warning("Failed to create directory %s: %s" % (spot.name, e))
     return directory
 
+def copyFile(name, inpath, outpath):
+        from shutil import copyfile
+        src = inpath + '/' + name
+        dst = outpath + '/' + name
+        copyfile(src, dst)
+
 if __name__ == "__main__":
     banner()
 ###@Need to add list with functions

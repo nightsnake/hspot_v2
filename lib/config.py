@@ -57,7 +57,7 @@ class Config():
     log_cfg['path'] = self.config.get('log', 'log_path')  
     return log_cfg
 
- def getWlanConfig(self):
+ def getWlanConfig(self, logger):
   ports = {}
   bridges = {}
   ports = {}
@@ -82,6 +82,7 @@ class Config():
   ovpn_cfg['DH_PARAM_SIZE'] = self.config.get('openvpn','DH_PARAM_SIZE')
   ovpn_cfg['ovpn_path'] = self.config.get('openvpn','ovpn_path')
   ovpn_cfg['ovpn_srv'] = self.config.get('openvpn','ovpn_srv')
+  ovpn_cfg['key_outpath'] = self.config.get('openvpn','key_outpath')
 
   return ovpn_cfg
   
