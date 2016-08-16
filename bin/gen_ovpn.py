@@ -65,7 +65,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
       os.chdir( ovpn_path )
       logger.debug("Make staticfile for %s" % cli_ip)
       gen_staticlients(cert_cfg['commonName'], cli_ip, ovpn_srv, logger)
-      inpath = ovpn_path
+      inpath = client_key_path
       outpath = key_outpath + '/' + certname
       logger.debug("Copy keys to directory with user configs. In: %s, out: %s" % (inpath, outpath))
       copyFile(certname + '.pem', inpath, outpath)
