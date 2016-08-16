@@ -117,6 +117,7 @@ def genFetcher (files, name, ftp_url, user, password, fetch_path, in_path, logge
     in_file_path = in_path + in_file
 
     out_file = name + "/" + in_file
+    out_zip_file = name + "/" + zip_file
     out_file_path = fetch_path + out_file
     tar_file_path = fetch_path + tar_file
     rsc_file_path = fetch_path + rsc_file
@@ -135,7 +136,7 @@ def genFetcher (files, name, ftp_url, user, password, fetch_path, in_path, logge
 #### Make archive with fetcher and mkt default config
      os.chdir( fetch_path )
 #     build_tar(tar_file, [out_file_path, rsc_file_path])
-     build_zip(name + "/" + zip_file, [in_file, rsc_file_path])
+     build_zip(out_zip_file, [in_file_path, rsc_file_path])
     except Exception as e:
      logger.warning("Failed to generate fetching list: %s" % e)
 

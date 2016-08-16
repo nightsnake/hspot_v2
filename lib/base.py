@@ -39,8 +39,10 @@ def build_tar(filename,includedfiles):
 
 def build_zip(filename,includedfiles):
     zip = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
-    for name in includedfiles:
-        zip.write(name)
+    for path in includedfiles:
+     for root, dirs, files in os.walk(path):
+      for file in files:
+       zip.write(file)
     zip.close()
 
 def filelist (directory):
