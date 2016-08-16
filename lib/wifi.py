@@ -17,18 +17,60 @@ from db_devices_properties import *
 from db_access_points import *
 from connector import *
 from config import Config
+from string import Template
 
 
-def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
+def makeAPConfig(ap, project, wlan, bridge, path, logger)
+ apcfg = ''
+ try:
+  if ap.type == 'mkt': #check AP type
+   cfg = {'ip' = ap.ip,
+          'gw' = ap.gw.split('/').[0],
+          'password' = ap.password,         
+          'name' = ap.name,
+          'project' = project,
+          'wlan_if' = wlan,
+          'bridge_if' = bridge,
+   }
+   in_file = 'default_ap.rsc'
+   file = open( key_path + in_file )
+   src = Template( file.read() )
+#Replace only options which defined into dict
+   result = src.safe_substitute(cfg)
+   dst = key_path + ap.name + '/' + in_file
+   dst.write(result)
+   return in_file
+  else:
+   logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
+   return 0
+ except Exception as e:
+  logger.error("[setExternalAP] Unexpected error: %s" % e)
+  return -1
+
+ return apcfg
+
+def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, key_path, logger):
  try:
   if hspot.type == 'mkt': #check AP type
    port = ports[str(ap.port)]
    logger.debug("Preparing hspot %s for external AP in port %s" % (hspot.name, port))
    addPortToBridge(h, hspot, port, bridges['hspot'], logger)
-   if (ap.address == ap.gw):    
+   ip = IPv4Address(ap.address)
+   gw = IPv4Address(ap.gw)
+   #Check if ip and gw placed in the same network
+   if (ip == gw):    
     addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
    else:
-    logger.warning("Netmasks for gw and address are not match. Please check settings")
+    logger.error("Netmasks for gw and address are not match. Please check settings")
+    return -1
+#Make bootconfig for ap
+   apcfg = makeAPConfig(ap, srv_cfg['project'], wlans['hspot'], bridges['hspot'], key_path, logger)
+   logger.debug("Startup config for %s has been written to %s" % (ap.name, apcfg))
+   apurl = 'ftp://%s/%s/%s' % (srv_cfg['ftp_ip'], ap.name, apcfg)
+   logger.debug("URL for ap config: %s" % apurl)
+#   Make link for config file and place into DB (need to add column)
+#   setAPURL(apcfg)
+#  
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0
@@ -306,7 +348,7 @@ def setWiFi(ap, logger):
 
     logger.debug("AP %s in port %s" % (ap.name, ap.port))
     if ap.port > 0:
-     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
+     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, key_path, logger)
     hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
     service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
 
