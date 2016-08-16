@@ -8,6 +8,7 @@
 
 import os,sys,inspect
 import tarfile
+import zipfile
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
 if cmd_subfolder not in sys.path:
  sys.path.insert(0, cmd_subfolder)
@@ -35,6 +36,12 @@ def build_tar(filename,includedfiles):
     for name in includedfiles:
         tar.add(name)
     tar.close()
+
+def build_zip(filename,includedfiles):
+    zip = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
+    for name in includedfiles:
+        zip.write(name)
+    zip.close()
 
 def filelist (directory):
     """
