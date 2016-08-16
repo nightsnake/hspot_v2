@@ -175,7 +175,7 @@ def makeConfig(id, logger):
     genFetcher(skel_files, spot.name, cfg['url'], cfg['ftp_user'], cfg['ftp_password'], key_path, etc_full_path, logger)
 #### Make openvpn files
     logger.debug("Making openvpn files...")
-    ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip)
+    ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
 #### Create link for customer
     try:
       cfg_url = http_url + "/cfg/" + spot.name + ".zip"
