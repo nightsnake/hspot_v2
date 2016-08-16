@@ -71,7 +71,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
      gen_server_config(DH_PARAM_SIZE)
     elif cfgtype == 'client' and srv_ip:
      os.chdir( retval + '/../tmp')
-     gen_client_config(certname, srv_ip)
+     gen_client_config(certname, srv_ip, logger)
      os.chdir( retval )
     elif cfgtype:
     ###@ Need to replace to logg.error
