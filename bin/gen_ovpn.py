@@ -60,7 +60,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
      # Make static ip for client, if defined
      if certype == 'client' and cli_ip:
       os.chdir( ovpn_path )
-      gen_staticlients(cert_cfg['commonName'], cli_ip, ovpn_srv)
+      gen_staticlients(cert_cfg['commonName'], cli_ip, ovpn_srv, logger)
     elif certype:
       ###@ Need to add logg.error (unknown cert type or undefined certname)
       return 0      
