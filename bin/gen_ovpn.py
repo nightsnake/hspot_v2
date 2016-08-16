@@ -46,6 +46,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
     ovpn_cfg = ovpncfg()
     ovpn_path = ovpn_cfg['ovpn_path']
     ovpn_srv = ovpn_cfg['ovpn_srv']
+    key_outpath = ovpn_cfg['key_outpath']
     client_key_path = ovpn_path + '/easy-rsa/keys/'
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
 
