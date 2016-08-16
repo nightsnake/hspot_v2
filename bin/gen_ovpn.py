@@ -38,7 +38,7 @@ def instructions():
     sys.stdout.write(colourise("key client.key\n",'0;32'))
     sys.stdout.write("\n")
 
-def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
+def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
     """
     function for external calls (unattended)
     """
@@ -50,6 +50,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
 
     if (certype == 'server' or certype == 'client') and certname:
+     logger.debug("Make cert  %s" % certname)
      os.chdir( ovpn_path )
      # Now build ta.key and dh params if they do not already exist
      build_openssl_extra(DH_PARAM_SIZE)
@@ -59,11 +60,19 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
      ca_cert, ca_key, cert_cert, cert_key = gen_cert(cert_cfg, certype, certname, ovpn_path, logger)
      # Make static ip for client, if defined
      if certype == 'client' and cli_ip:
+      logger.debug("Type of cert is client and ip is %s" % cli_ip)
       os.chdir( ovpn_path )
+      logger.debug("Make staticfile for %s" % cli_ip)
       gen_staticlients(cert_cfg['commonName'], cli_ip, ovpn_srv, logger)
+      inpath = ovpn_path
+      outpath = key_outpath + '/' + certname
+      logger.debug("Copy keys to directory with user configs. In: %s, out: %s" % (inpath, outpath))
+      copyFile(certname + '.pem', inpath, outpath)
+      copyFile(certname + '.key', inpath, outpath)
+
     elif certype:
-      ###@ Need to add logg.error (unknown cert type or undefined certname)
-      return 0      
+      logger.error("Fatal error: unknown cert type or undefined certname")
+      return -1
      
     # Make configs for client and server
     if cfgtype == 'server':
@@ -74,9 +83,8 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
      gen_client_config(certname, srv_ip, logger)
      os.chdir( retval )
     elif cfgtype:
-    ###@ Need to replace to logg.error
-#     print "Unknown config type: %s or ovpn srv IP is not defined. Exiting..." % cfgtype
-     return 0
+     logger.error("Unknown config type: %s or ovpn srv IP is not defined. Exiting..." % cfgtype)
+     return -1
 
     return 1
 
