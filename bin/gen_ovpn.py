@@ -42,10 +42,11 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
     """
     function for external calls (unattended)
     """
-    client_key_path = ovpn_path + '/easy-rsa/keys/'
     retval = os.getcwd()
     ovpn_cfg = ovpncfg()
     ovpn_path = ovpn_cfg['ovpn_path']
+    ovpn_srv = ovpn_cfg['ovpn_srv']
+    client_key_path = ovpn_path + '/easy-rsa/keys/'
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
 
     if (certype == 'server' or certype == 'client') and certname:
@@ -53,9 +54,9 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip):
      # Now build ta.key and dh params if they do not already exist
      build_openssl_extra(DH_PARAM_SIZE)
      # Make a certconfig
-     cert_cfg = certcfg(certname, certype)
+     cert_cfg = certcfg(certname, certype, logger)
      # Make keys (CA, Server or Client)
-     ca_cert, ca_key, cert_cert, cert_key = gen_cert(cert_cfg, certype, certname, ovpn_path)
+     ca_cert, ca_key, cert_cert, cert_key = gen_cert(cert_cfg, certype, certname, ovpn_path, logger)
      # Make static ip for client, if defined
      if certype == 'client' and cli_ip:
       os.chdir( ovpn_path )
