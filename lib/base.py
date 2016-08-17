@@ -7,6 +7,7 @@
 ##----------------------------------------------------------------------
 
 import os,sys,inspect
+from os.path import basename
 import tarfile
 import zipfile
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../lib")))
@@ -38,12 +39,16 @@ def build_tar(filename,includedfiles):
     tar.close()
 
 def build_zip(filename,includedfiles):
-    zip = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
-    for path in includedfiles:
-     for root, dirs, files in os.walk(path):
-      for file in files:
-       zip.write(file)
-    zip.close()
+    try:
+     logger.debug("Create zip archive")
+     zip = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
+     for f in includedfiles:
+      logger.debug("Add %s to archive" % basename(f))
+      zip.write(f, basename(f))
+     zip.close()
+    except Exception as e:
+     logger.warning("Failed to create archive %s: %s" % (filename, e))
+
 
 def filelist (directory):
     """
