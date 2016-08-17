@@ -38,7 +38,7 @@ def build_tar(filename,includedfiles):
         tar.add(name)
     tar.close()
 
-def build_zip(filename,includedfiles):
+def build_zip(filename,includedfiles, logger):
     try:
      logger.debug("Create zip archive")
      zip = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
