@@ -18,96 +18,73 @@ from db_access_points import *
 from connector import *
 from config import Config
 from string import Template
+from base import *
 
-
-def makeAPConfig(ap, project, wlan, bridge, path, logger)
+def makeAPConfig(ap, project, wlan, bridge, path, hs_name, logger):
  apcfg = ''
  try:
   if ap.type == 'mkt': #check AP type
-   cfg = {'ip' = ap.ip,
-          'gw' = ap.gw.split('/').[0],
-          'password' = ap.password,         
-          'name' = ap.name,
-          'project' = project,
-          'wlan_if' = wlan,
-          'bridge_if' = bridge,
-   }
+   cfg = dict(ip = ap.ip,
+          gw = ap.gw.split('/')[0],
+          password = ap.password,
+          name = ap.name,
+          project = project,
+          wlan_if = wlan,
+          bridge_if = bridge,
+   )
    in_file = 'default_ap.rsc'
-   file = open( key_path + in_file )
+   logger.debug("[makeAPConfig] Try to open file %s in %s" % (in_file, path))
+   file = open( path + in_file )
    src = Template( file.read() )
 #Replace only options which defined into dict
    result = src.safe_substitute(cfg)
-   dst = key_path + ap.name + '/' + in_file
+   out_file = ap.name + '.rsc'
+   out_path = path + hs_name + '/' + out_file
+   dst = open(out_path, 'w')
    dst.write(result)
-   return in_file
+   return out_file
   else:
    logger.warning("Unknown AP type %s for %s" % (ap.type, ap.name))
    return 0
  except Exception as e:
-  logger.error("[setExternalAP] Unexpected error: %s" % e)
+  logger.error("[makeAPConfig] Unexpected error: %s" % e)
   return -1
 
  return apcfg
 
-def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, key_path, logger):
+def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
  try:
   if hspot.type == 'mkt': #check AP type
    port = ports[str(ap.port)]
    logger.debug("Preparing hspot %s for external AP in port %s" % (hspot.name, port))
    addPortToBridge(h, hspot, port, bridges['hspot'], logger)
-   ip = IPv4Address(ap.address)
-   gw = IPv4Address(ap.gw)
+   ip = ipaddr.IPv4Network(ap.ip)
+   gw = ipaddr.IPv4Network(ap.gw)
    #Check if ip and gw placed in the same network
-   if (ip == gw):    
+   if (ip == gw):
+    logger.debug("Add gw address %s for AP %s on mkt" % (ap.gw, ap.name))
     addAddressToInt(h, hspot, bridges['hspot'], ap.gw, logger)
    else:
     logger.error("Netmasks for gw and address are not match. Please check settings")
     return -1
 #Make bootconfig for ap
-   apcfg = makeAPConfig(ap, srv_cfg['project'], wlans['hspot'], bridges['hspot'], key_path, logger)
-   logger.debug("Startup config for %s has been written to %s" % (ap.name, apcfg))
-   apurl = 'ftp://%s/%s/%s' % (srv_cfg['ftp_ip'], ap.name, apcfg)
-   logger.debug("URL for ap config: %s" % apurl)
+   apcfg = makeAPConfig(ap, srv_cfg['project'], wlans['hspot'], bridges['hspot'], srv_cfg['key_path'], hspot.name, logger)
+   if apcfg:
+    logger.debug("Startup config for %s has been written to %s" % (ap.name, apcfg))
+    apurl = 'ftp://%s/%s/%s' % (srv_cfg['ftp_ip'], hspot.name, apcfg)
+    logger.debug("URL for ap config: %s" % apurl)
+   else:
+    logger.error("[setExternalAP] Can't create bootconfig for AP")
+    return -1
+#   make zip with file and README
 #   Make link for config file and place into DB (need to add column)
 #   setAPURL(apcfg)
-#  
+#
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0
  except Exception as e:
   logger.error("[setExternalAP] Unexpected error: %s" % e)
-  return -1
-
-def addAddressToInt(c, device, port, address, logger):
- try:
-  if device.type == 'mkt': #check AP type
-###@need to add check for existing address
-   ip = c.response_handler(c.talk(["/ip/address/add",
-                                                              "=address="+address,
-                                                              "=interface="+port,
-                                ]))
-  else:
-   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
-   return 0
- except Exception as e:
-  logger.error("[addAddressToInt] Unexpected error: %s" % e)
-  return -1
-
-def addPortToBridge(c, device, port, bridge, logger):
-#Universal func for adding port to bridge
- try:
-  if device.type == 'mkt': #check AP type
-   br = c.response_handler(c.talk(["/interface/bridge/port/add",
-                                                              "=interface="+port,
-                                                              "=bridge="+bridge,
-                                ]))
-
-   logger.debug("Interface %s was successfully added to bridge %s on device %s" % (port, bridge, device.name))
-  else:
-   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
-   return 0
- except Exception as e:
-  logger.error("[addPortToBridge] Unexpected error: %s" % e)
   return -1
 
 def setHspotWiFi(c, hspot, ap, srv_cfg, interfaces, bridges, logger):
@@ -348,25 +325,28 @@ def setWiFi(ap, logger):
 
     logger.debug("AP %s in port %s" % (ap.name, ap.port))
     if ap.port > 0:
-     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, key_path, logger)
-    hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
-    service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
+     ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
+    if c != -1:
+     hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
+     service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
 
-    passwd = setProfile(c, hspot, ap, logger)
-    ssid = setSSID(c, hspot, ap, srv_cfg, wlans, logger)
-    freq = setFreq(c, ap, srv_cfg, wlans, logger)
+     passwd = setProfile(c, hspot, ap, logger)
+     ssid = setSSID(c, hspot, ap, srv_cfg, wlans, logger)
+     freq = setFreq(c, ap, srv_cfg, wlans, logger)
+    else:
+     logger.error("[setWiFi] Can't connect to device: %s" % ap.name)
+     return 0
     # Return 0 if OK
     return 1
    except Exception as e:
     logger.error("[setWiFi] unexpected error: %s" % e)
     return -1
   else:
-   logger.warning("Device %s (hspot %s) is offline or already done. Skipping..." % (ap.name, hspot.name))
+   logger.warning("[setWiFi] Device %s (hspot %s) is offline or already done. Skipping..." % (ap.name, hspot.name))
    return 0
 
 if __name__ == "__main__":
 ###@Need to add help()
  print "Only as a module"
  sys.exit()
-
 

@@ -60,7 +60,7 @@ class Config():
  def getWlanConfig(self, logger):
   ports = {}
   bridges = {}
-  ports = {}
+  wlans = {}
   try:
     ports['0'] = self.config.get('interfaces', 'port0')
     ports['1'] = self.config.get('interfaces', 'port1')

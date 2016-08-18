@@ -15,6 +15,55 @@ if cmd_subfolder not in sys.path:
  sys.path.insert(0, cmd_subfolder)
 from logger import *
 
+def addAddressToInt(c, device, port, address, logger):
+ try:
+  if device.type == 'mkt': #check AP type
+###@need to add check for existing address
+   ip = c.response_handler(c.talk(["/ip/address/add",
+                                                              "=address="+address,
+                                                              "=interface="+port,
+                                ]))
+   logger.debug("IP address %s has been added to interface %s" % (address, port))
+  else:
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("[addAddressToInt] Unexpected error: %s" % e)
+  return -1
+
+def addPortToBridge(c, device, port, bridge, logger):
+#Universal func for adding port to bridge
+ try:
+  if device.type == 'mkt': #check AP type
+   delPortFromBridge(c, device, port, bridge, logger)
+   br = c.response_handler(c.talk(["/interface/bridge/port/add",
+                                                              "=interface="+port,
+                                                              "=bridge="+bridge,
+                                ]))
+   logger.debug("Interface %s was successfully added to bridge %s on device %s" % (port, bridge, device.name))
+  else:
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("[addPortToBridge] Unexpected error: %s" % e)
+  return -1
+
+def delPortFromBridge(c, device, port, bridge, logger):
+#Universal func for adding port to bridge
+ try:
+  if device.type == 'mkt': #check AP type
+   ports = c.response_handler(c.talk(["/interface/bridge/port/print", "?interface="+str(port),]))
+   br = c.response_handler(c.talk(["/interface/bridge/port/remove",
+                                                              "=.id="+ports[0]['.id'],
+                                ]))
+   logger.debug("Interface %s was successfully removed from bridge %s on device %s" % (port, bridge, device.name))
+  else:
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("[delPortFromBridge] Unexpected error: %s" % e)
+  return -1
+
 def banner():
     sys.stdout.write("\n")
     sys.stdout.write("      ______             _           \n")
