@@ -182,6 +182,7 @@ def makeConfig(id, logger):
 #### Create link for customer
     try:
       cfg_url = "%s/%s/%s.zip" % (ftp_url, spot.name, spot.name)
+      logger.debug("CFG url is %s" % cfg_url)
       a.devSetConfigURL(id, cfg_url)
     except:
       logger.warning("Failed to moving config for %s" % spot.name)
