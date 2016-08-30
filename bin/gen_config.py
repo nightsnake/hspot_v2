@@ -121,7 +121,7 @@ def genFetcher (files, name, ftp_url, user, password, fetch_path, in_path, logge
     out_file_path = fetch_path + out_file
     tar_file_path = fetch_path + tar_file
     rsc_file_path = fetch_path + rsc_file
-
+    readme_file_path = fetch_path + "README"
     retval = os.getcwd()
 
     filein = open( in_file_path )
@@ -136,7 +136,7 @@ def genFetcher (files, name, ftp_url, user, password, fetch_path, in_path, logge
 #### Make archive with fetcher and mkt default config
      os.chdir( fetch_path )
 #     build_tar(tar_file, [out_file_path, rsc_file_path])
-     build_zip(out_zip_file, [out_file_path, rsc_file_path], logger)
+     build_zip(out_zip_file, [out_file_path, rsc_file_path, readme_file_path], logger)
     except Exception as e:
      logger.warning("Failed to generate fetching list: %s" % e)
 
@@ -181,7 +181,7 @@ def makeConfig(id, logger):
     ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
 #### Create link for customer
     try:
-      cfg_url = http_url + "/cfg/" + spot.name + ".zip"
+      cfg_url = "%s/%s/%s.zip" % (ftp_url, spot.name, spot.name)
       a.devSetConfigURL(id, cfg_url)
     except:
       logger.warning("Failed to moving config for %s" % spot.name)
