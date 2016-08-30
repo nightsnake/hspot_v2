@@ -88,7 +88,7 @@ class access_pointsAction():
             return hs_id.hs_id
 
 #Set URL for AP config
-        def setAPURL(self, id, apcfg):
+        def setAPUrl(self, id, apcfg):
             urlap = session.query(access_pointsTable).filter_by(id=id).one()
             urlap.url_archive = apcfg
             session.commit()

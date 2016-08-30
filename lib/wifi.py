@@ -78,7 +78,7 @@ def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
     return -1
 #   make zip with file and README
 #   Make link for config file and place into DB (need to add column)
-   setAPURL(ap.id, apcfg)
+   setAPurl(ap.id, apcfg)
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0

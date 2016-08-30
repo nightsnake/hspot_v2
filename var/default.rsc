@@ -6,8 +6,8 @@ set [ find default-name=wlan1 ] disabled=no mode=ap-bridge wireless-protocol=802
 /ip pool
 remove [ find name=dhcp ]
 add name=hs-pool-default ranges=192.168.88.10-192.168.88.200
-foreach i in [/interface bridge port print ] do=[ remove $i ]
-foreach i in [/interface ethernet print where name != "ether1"] do=[ /interface bridge port add interface=$i bridge=hs-bridge ]
+:foreach i in [/interface bridge port find where interface~"ether" ] do=[ /interface bridge port remove $i ]
+:foreach i in [/interface ethernet find where name !="ether1"] do=[ /interface bridge port add interface=$i bridge=hs-bridge ]
 /ip address
 add address=192.168.88.1/24 interface=hs-bridge network=192.168.88.0
 /ip dhcp-client
