@@ -76,7 +76,7 @@ def getHspotSettings(srv_cfg, spot):
            'wifi_url':wifi_url
            }
     
-    return key_path, http_url, cfg
+    return key_path, ftp_url, cfg
 
 def setConfigFiles(spot, skel_files, cfg, skel_full_path, key_path, name, logger):
 ####
@@ -167,7 +167,7 @@ def makeConfig(id, logger):
       sys.exit(1)
 
     logger.debug("Prepare settings...")
-    key_path, http_url, cfg = getHspotSettings(srv_cfg, spot)
+    key_path, ftp_url, cfg = getHspotSettings(srv_cfg, spot)
     logger.debug("Making config files...")      
     setConfigFiles(spot, skel_files, cfg, skel_full_path, key_path, spot.name, logger)
 
@@ -184,8 +184,9 @@ def makeConfig(id, logger):
       cfg_url = "%s/%s/%s.zip" % (ftp_url, spot.name, spot.name)
       logger.debug("CFG url is %s" % cfg_url)
       a.devSetConfigURL(id, cfg_url)
-    except:
-      logger.warning("Failed to moving config for %s" % spot.name)
+    except Exception as e:
+      logger.warning("Failed to make cfg url for %s: %s" % (spot.name, e))
+      
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
