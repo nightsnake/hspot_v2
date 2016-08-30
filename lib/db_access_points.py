@@ -27,6 +27,7 @@ class access_pointsTable(Base):
         password = Column(String(40))
         hs_id = Column(Integer)
         status = Column(Boolean, default=False)
+        url_archive = Column(String(255))
         last_live = Column(TIMESTAMP)
         creat_date = Column(TIMESTAMP)
         comment = Column(String(256))
@@ -50,8 +51,8 @@ class access_pointsTable(Base):
             self.port = port
 
         def __repr__(self):
-            return "<devices_propertiesTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)>" % \
-                                            (self.id, self.ip, self.gw, self.login, self.password, self.hs_id, self.comment, self.freq, self.type, self.port)
+            return "<devices_propertiesTable(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)>" % \
+                                            (self.id, self.ip, self.gw, self.login, self.password, self.hs_id, self.url_archive, self.comment, self.freq, self.type, self.port)
 class access_pointsAction():
 #Get settings by hotspot ID
         def getAPByHspotId(self, hs_id):
@@ -86,3 +87,9 @@ class access_pointsAction():
             hs_id = session.query(access_pointsTable).filter_by(id=id).one()
             return hs_id.hs_id
 
+#Set URL for AP config
+        def setAPURL(self, id, apcfg):
+            urlap = session.query(access_pointsTable).filter_by(id=id).one()
+            urlap.url_archive = apcfg
+            session.commit()
+            
