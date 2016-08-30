@@ -181,7 +181,7 @@ def makeConfig(id, logger):
     ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
 #### Create link for customer
     try:
-      cfg_url = "%s/%s/%s.zip" % (ftp_url, spot.name, spot.name)
+      cfg_url = "%s/%s/fetcher.zip" % (ftp_url, spot.name)
       logger.debug("CFG url is %s" % cfg_url)
       a.devSetConfigURL(id, cfg_url)
     except Exception as e:
