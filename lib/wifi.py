@@ -54,6 +54,7 @@ def makeAPConfig(ap, project, wlan, bridge, path, hs_name, logger):
 
 def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
  try:
+  a = access_pointsAction()
   if hspot.type == 'mkt': #check AP type
    port = ports[str(ap.port)]
    logger.debug("Preparing hspot %s for external AP in port %s" % (hspot.name, port))
@@ -78,7 +79,7 @@ def setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger):
     return -1
 #   make zip with file and README
 #   Make link for config file and place into DB (need to add column)
-   setAPurl(ap.id, apcfg)
+   a.setAPurl(ap.id, apcfg)
   else:
    logger.warning("Unknown AP type %s for %s" % (hspot.type, hspot.name))
    return 0
