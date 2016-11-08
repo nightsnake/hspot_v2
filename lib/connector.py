@@ -10,6 +10,7 @@ import os, sys
 from RosAPI import Core
 
 def connectToMikrotik(ip, login, password, logger):
+ logger.debug("[connectToMikrotik] Trying to connect to %s with %s %s" % (ip, login, password))
  try: 
   c = Core(ip)
   c.login (login, password)
@@ -21,6 +22,7 @@ def connectToMikrotik(ip, login, password, logger):
 
 def connectDevice(ip, login, password, type, logger):
  c = ''
+ logger.debug("[connectDevice] Trying to connect to %s with %s %s (type %s)" % (ip, login, password, type))
  try:
   if type == 'mkt':
    c = connectToMikrotik(ip, login, password, logger)

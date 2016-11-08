@@ -317,7 +317,7 @@ def setWiFi(ap, logger):
  aps = [ap]
 
  for ap in aps:
-  if (ap.status) and (ap.done != 1):
+  if (ap.status) and (hspot.status) and (ap.done != 1):
    try:
     # make connection to device (by api)
     c = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
