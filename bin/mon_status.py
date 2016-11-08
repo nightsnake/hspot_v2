@@ -17,7 +17,6 @@ from connector import *
 
 def getStatus():
  hspots = []
- logger = logger("hs-monitor")
 
  a = devAction()
  p = access_pointsAction()
@@ -48,6 +47,8 @@ def getStatus():
 
 def main():
      getStatus()
+
 if __name__ == "__main__":
+    logger = logger("hs-generator")
     sys.exit(main())
 
