@@ -24,7 +24,7 @@ def getCurrentUsers():
 
  for hspot in hspots:
   try:
-   logger.debug("Hotspot ID: " + id)
+   logger.debug("Hotspot ID: " + hspot.id)
    aps = p.getAPByHspotId(hspot.id)
    for ap in aps:
     try:
