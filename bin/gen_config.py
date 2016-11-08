@@ -189,14 +189,14 @@ def makeConfig(id, logger):
       
 
 if __name__ == "__main__":
+    logger = logger("hs-generator")
     if len(sys.argv) > 1:
      try:
       id = sys.argv[1]
-      logger = logger("hs-generator")
       logger.debug("Hotspot ID: " + id)
       makeConfig(id, logger)
      except Exception as e:
-      logger.warning("Unexpected error: " + sys.argv[0] + " [id]")
+      logger.warning("Unexpected error: %s: %s" % (sys.argv[0], e))
       sys.stderr.write("Error: %s\n" % e)
       sys.exit(1)
      else:	  
