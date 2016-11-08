@@ -30,7 +30,7 @@ def getStatus():
 
  for hspot in hspots:
   try:
-   logger.debug("Hotspot ID: %s) % (hspot.id)
+   logger.debug("Hotspot ID: %s" % (hspot.id))
    c = connectDevice(hspot.ip, hspot.login, hspot.password, hspot.type, logger)
    status = 1
    aps = p.getAPByHspotId(hspot.id)
