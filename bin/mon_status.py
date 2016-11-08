@@ -39,11 +39,11 @@ def getStatus():
      cap = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
      ap_status = 1
     except Exception as e:
-     logger.warning("Can't connect to device: %s" % e)
+     logger.warning("Can't connect to AP: %s" % e)
      ap_status = 0
     p.setApStatus(ap.id, status)
   except Exception as e:
-   logger.warning("Can't connect to device: %s" % e)
+   logger.warning("Can't connect to Hotspot: %s" % e)
    status = 0
   a.devSetStatus(hspot.id, status)
 
@@ -51,6 +51,6 @@ def main():
      getStatus()
 
 if __name__ == "__main__":
-    logger = logger("hs-generator")
+    logger = logger("hs-monitor")
     sys.exit(main())
 
