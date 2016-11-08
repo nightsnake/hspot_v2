@@ -29,7 +29,7 @@ def ovpncfg():
 def certcfg(cert_name, cert_type, logger):
  config = Config()
  cert_cfg = config.getCertConfig()
- cert_cfg['commonName'] = "%s %s Cert" % (cert_type, cert_name)
+ cert_cfg['commonName'] = "%s" % (cert_name)
 # cert_cfg['serial'] = 12345999 #need to add random numbers generator
  cert_cfg['serial'] = int(random.random() * 100000000)
  cert_cfg['cert_filename'] = cert_name + ".pem"
