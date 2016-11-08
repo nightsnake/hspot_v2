@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# mon_status.py -- check heartbeat
-# Copyright (C) Snake, 2015
+# mon_user.py -- count wifi users on each AP
+# need to add in crontab
+# Copyright (C) Snake, 2016
 ##----------------------------------------------------------------------
 
 import os, sys, inspect

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##----------------------------------------------------------------------
-# get_status.py -- check device status
+# mon_status.py -- check device status
 # need to add in crontab
-# Copyright (C) Snake, 2015
+# Copyright (C) Snake, 2016
 ##----------------------------------------------------------------------
 
 import os, sys, inspect
@@ -37,7 +37,7 @@ def getStatus():
     try:
      cap = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
      ap_status = 1
-    except Exception as e::
+    except Exception as e:
      logger.warning("Can't connect to device: %s" % e)
      ap_status = 0
     p.setApStatus(ap.id, status)

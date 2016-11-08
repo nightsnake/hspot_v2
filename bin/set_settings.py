@@ -69,7 +69,8 @@ def setSettings(logger, id=0):
   list = setBlackList(hspot, logger)
   cna = setWalledGarden(hspot, logger)
 
-  if fw or mac or profile or wifi or list or cna:
+#All functions must return 1 (0 if error)
+  if fw and mac and profile and wifi and list and cna:
    try: 
     a.devSetDone(hspot.id)
    except Exception as e:
