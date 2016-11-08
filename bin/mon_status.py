@@ -12,6 +12,8 @@ cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(insp
 if cmd_subfolder not in sys.path:
  sys.path.insert(0, cmd_subfolder)
 from db_devices import *
+from db_access_points import *
+
 from logger import *
 from connector import *
 
