@@ -24,7 +24,7 @@ class logger():
   log_cfg = config.getLogConfig()
   level = log_cfg['level']
 ###@ Need some better
-  path = "../" + log_cfg['path']
+  path = log_cfg['path']
   self.topic = topic
 
   if verbose:
