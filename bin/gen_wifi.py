@@ -39,7 +39,14 @@ def genApConfig(logger, id=0):
     logger.error("[genApConfig] Unexpected error: %s" % e)
     return -1
   else:
-   logger.warning("[genApConfig] Device %s is offline, skipping...")
+   try:
+    done = setWiFi(ap, logger)
+    p.setApDone(id, done)
+    return 1
+   except Exception as e:
+    logger.error("[genApConfig] Unexpected error: %s" % e)
+    return -1
+#   logger.warning("[genApConfig] Device %s is offline, skipping...")
 
 
 #Set WiFi AP settings by its ID

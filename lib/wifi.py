@@ -342,8 +342,18 @@ def setWiFi(ap, logger):
     logger.error("[setWiFi] unexpected error: %s" % e)
     return -1
   else:
-   logger.warning("[setWiFi] Device %s (hspot %s) is offline or already done. Skipping..." % (ap.name, hspot.name))
-   return 0
+   #If hotspot is offline (or hspot + internal AP)
+   if not (hspot.status):
+    logger.warning("[setWiFi] hspot %s is offline. Skipping..." % (hspot.name))
+    return 0
+   #If external AP and it's not configured
+   elif (ap.port > 0) and (ap.done != 1):
+    ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
+    return 1
+   #If AP is done
+   else:
+    logger.warning("[setWiFi] Device %s (hspot %s) is already configured. Skipping..." % (ap.name, hspot.name))
+    return 0
 
 if __name__ == "__main__":
 ###@Need to add help()
