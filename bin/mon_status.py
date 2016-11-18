@@ -32,16 +32,18 @@ def getStatus():
   try:
    logger.debug("Hotspot ID: %s" % (hspot.id))
    c = connectDevice(hspot.ip, hspot.login, hspot.password, hspot.type, logger)
-   status = 1
-   aps = p.getAPByHspotId(hspot.id)
-   for ap in aps:
-    try:
-     cap = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
-     ap_status = 1
-    except Exception as e:
-     logger.warning("Can't connect to AP: %s" % e)
-     ap_status = 0
-    p.setApStatus(ap.id, status)
+   if c != -1:
+    status = 1    
+    aps = p.getAPByHspotId(hspot.id)   
+    for ap in aps:
+     try:
+      cap = connectDevice(ap.ip, ap.login, ap.password, ap.type, logger)
+      if cap != -1:
+       ap_status = 1
+     except Exception as e:
+      logger.warning("Can't connect to AP: %s" % e)
+      ap_status = 0
+     p.setApStatus(ap.id, status)
   except Exception as e:
    logger.warning("Can't connect to Hotspot: %s" % e)
    status = 0
