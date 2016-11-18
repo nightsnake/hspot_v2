@@ -24,7 +24,7 @@ def genApConfig(logger, id=0):
  if id:
   aps = [p.getAPById(id)]
  else:
-  aps = p.getAPAlive()
+  aps = p.getAPNew()
  for ap in aps:
   if ap.status:
    try:

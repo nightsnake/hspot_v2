@@ -165,28 +165,34 @@ def makeConfig(id, logger):
     if not spot:
       logger.warning("Failed to create config: hspot id not found")
       sys.exit(1)
-
-    logger.debug("Prepare settings...")
-    key_path, ftp_url, cfg = getHspotSettings(srv_cfg, spot)
-    logger.debug("Making config files...")      
-    setConfigFiles(spot, skel_files, cfg, skel_full_path, key_path, spot.name, logger)
+    if spot.type == 'mkt': #check AP type
+      logger.debug("Prepare settings...")
+      key_path, ftp_url, cfg = getHspotSettings(srv_cfg, spot)
+      logger.debug("Making config files...")      
+      setConfigFiles(spot, skel_files, cfg, skel_full_path, key_path, spot.name, logger)
 
 #### Marking device as 'new'
-    a.devSetNew(spot.id)
+#    a.devSetNew(spot.id)
 #### Make fetcher.cfg
-    logger.debug("Making fetcher file...")
-    genFetcher(skel_files, spot.name, cfg['url'], cfg['ftp_user'], cfg['ftp_password'], key_path, etc_full_path, logger)
+      logger.debug("Making fetcher file...")
+      genFetcher(skel_files, spot.name, cfg['url'], cfg['ftp_user'], cfg['ftp_password'], key_path, etc_full_path, logger)
 #### Make openvpn files
-    logger.debug("Making openvpn files...")
-    ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
+      logger.debug("Making openvpn files...")
+      ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
 #### Create link for customer
-    try:
-      cfg_url = "%s/%s/fetcher.zip" % (ftp_url, spot.name)
-      logger.debug("CFG url is %s" % cfg_url)
-      a.devSetConfigURL(id, cfg_url)
-    except Exception as e:
-      logger.warning("Failed to make cfg url for %s: %s" % (spot.name, e))
-      
+      try:
+        cfg_url = "%s/%s/fetcher.zip" % (ftp_url, spot.name)
+        logger.debug("CFG url is %s" % cfg_url)
+        a.devSetConfigURL(id, cfg_url)
+#### Marking device as 'configured'
+        a.devSetDone(spot.id)
+        a.devUnSetNew(spot.id)
+      except Exception as e:
+        logger.warning("Failed to make cfg url for %s: %s" % (spot.name, e))
+    elif spot.type == 'wrt':
+      logger.debug("Device type for %s is DD-WRT, skipping..." % (spot.name))
+      a.devSetDone(spot.id)
+      a.devUnSetNew(spot.id)  
 
 if __name__ == "__main__":
     logger = logger("hs-generator")

@@ -78,7 +78,7 @@ class devAction():
 #Set device as done
         def devSetDone(self, id):
             acthspot = session.query(devTable).filter_by(id=id).one()
-            acthspot.done = 0
+            acthspot.done = 1
             session.commit()
 #Unset 'New' mark from device
         def devUnSetNew(self, id):
