@@ -1,3 +1,4 @@
+!/tmp/.keep
 /tmp/*
 /bin/var
 !/var/log
