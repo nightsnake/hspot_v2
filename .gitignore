@@ -1,5 +1,5 @@
-!/tmp/.keep
 /tmp/*
+!tmp/.keep
 /bin/var
 !/var/log
 !/var/*.rsc
