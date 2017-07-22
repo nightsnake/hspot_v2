@@ -1,10 +1,9 @@
 /tmp/*
 !tmp/.keep
 /bin/var
+/var/*
 !/var/log
 !/var/*.rsc
 !/var/README
 !/var/*.js
-/var/*
-/lib/*.pyc
 *.pyc
