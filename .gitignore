@@ -1,4 +1,5 @@
 /tmp/*
+/bin/var
 !/var/log
 !/var/*.rsc
 !/var/README
