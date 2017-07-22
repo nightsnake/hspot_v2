@@ -25,37 +25,36 @@ def genApConfig(logger, id=0):
   aps = [p.getAPById(id)]
  else:
   aps = p.getAPNew()
+  logger.warning("[genApConfig] Nothing to do, exiting...")
  for ap in aps:
-  if ap.status:
+  hs_id = p.getHspotIdByAP(ap.id)
+  hs_status = a.devGetById(hs_id).status
+  logger.debug("[genApConfig] Checking AP %s in Hotspot %s: " % (ap.id, hs_id))
+  if hs_status:
    try:
     done = setWiFi(ap, logger)
-    p.setApDone(id, done)
-#      else:
-###need to set smth if error
-
+    logger.debug("[genApConfig] Configuration for AP %s is completed with status %s: " % (ap.id, done))
+    p.setApDone(ap.id, done)
+    if done > 0:
+     logger.debug("[genApConfig] Setting AP %s as old: " % (ap.id))
+     p.setApOld(ap.id)
    # Return 1 if OK
     return 1
    except Exception as e:
     logger.error("[genApConfig] Unexpected error: %s" % e)
     return -1
   else:
-   try:
-    done = setWiFi(ap, logger)
-    p.setApDone(id, done)
-    return 1
-   except Exception as e:
-    logger.error("[genApConfig] Unexpected error: %s" % e)
-    return -1
-#   logger.warning("[genApConfig] Device %s is offline, skipping...")
+   logger.warning("[genApConfig] Device %s is offline, skipping..." % (hs_id))
+   return 0
 
 
 #Set WiFi AP settings by its ID
 if __name__ == "__main__":
+    logger = logger("hs-ap-config")
     if len(sys.argv) > 1:
      try:
 #If AP ID defined, set only on it
       id = sys.argv[1]
-      logger = logger("hs-ap-config")
       logger.debug("AP ID: " + id)
       genApConfig(logger, id)
      except Exception as e:

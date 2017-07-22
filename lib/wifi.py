@@ -328,7 +328,8 @@ def setWiFi(ap, logger):
      ext_ap = setExternalAP(h, hspot, ap, srv_cfg, ports, wlans, bridges, logger)
     if c != -1:
      hs_wifi = setHspotWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
-     service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
+     if hspot.service_wifi:
+      service = setServiceWiFi(c, hspot, ap, srv_cfg, wlans, bridges, logger)
 
      passwd = setProfile(c, hspot, ap, logger)
      ssid = setSSID(c, hspot, ap, srv_cfg, wlans, logger)
@@ -353,7 +354,7 @@ def setWiFi(ap, logger):
    #If AP is done
    else:
     logger.warning("[setWiFi] Device %s (hspot %s) is already configured. Skipping..." % (ap.name, hspot.name))
-    return 0
+    return 1
 
 if __name__ == "__main__":
 ###@Need to add help()

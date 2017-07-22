@@ -1,0 +1,8 @@
+/tmp/*
+!/var/log
+!/var/*.rsc
+!/var/README
+!/var/*.js
+/var/*
+/lib/*.pyc
+*.pyc

@@ -85,6 +85,11 @@ class access_pointsAction():
             setdone = session.query(access_pointsTable).filter_by(id=id).one()
             setdone.done = done
             session.commit()
+#Set "old"
+        def setApOld(self, id):
+            setold = session.query(access_pointsTable).filter_by(id=id).one()
+            setold.new = 0
+            session.commit()
 
         def getHspotIdByAP(self, id):
             hs_id = session.query(access_pointsTable).filter_by(id=id).one()

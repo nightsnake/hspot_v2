@@ -20,7 +20,6 @@ def clearBlackList(c, logger):
  else:
   return 0
  
-
 def setBlackList(c, hspot, blacklist, logger):
  try:
   proxy = c.response_handler(c.talk(["/ip/proxy/set", "=always-from-cache=no",

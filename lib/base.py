@@ -34,8 +34,7 @@ def addAddressToInt(c, device, port, address, logger):
 def addPortToBridge(c, device, port, bridge, logger):
 #Universal func for adding port to bridge
  try:
-  if device.type == 'mkt': #check AP type
-   delPortFromBridge(c, device, port, bridge, logger)
+  if (device.type == 'mkt' and isPortInBridge(c, device, port, bridge, logger) == 0): #check AP type
    br = c.response_handler(c.talk(["/interface/bridge/port/add",
                                                               "=interface="+port,
                                                               "=bridge="+bridge,
@@ -51,7 +50,7 @@ def addPortToBridge(c, device, port, bridge, logger):
 def delPortFromBridge(c, device, port, bridge, logger):
 #Universal func for adding port to bridge
  try:
-  if device.type == 'mkt': #check AP type
+  if (device.type == 'mkt' and isPortInBridge(c, device, port, bridge, logger) == 1): #check AP type
    ports = c.response_handler(c.talk(["/interface/bridge/port/print", "?interface="+str(port),]))
    br = c.response_handler(c.talk(["/interface/bridge/port/remove",
                                                               "=.id="+ports[0]['.id'],
@@ -62,6 +61,25 @@ def delPortFromBridge(c, device, port, bridge, logger):
    return 0
  except Exception as e:
   logger.error("[delPortFromBridge] Unexpected error: %s" % e)
+  return -1
+
+def isPortInBridge(c, device, port, bridge, logger):
+#Universal func for adding port to bridge
+ try:
+  if device.type == 'mkt': #check AP type
+   ports = c.response_handler(c.talk(["/interface/bridge/port/print", "?interface="+str(port),]))
+   logger.debug("Check if interface %s in bridge %s on device %s. Result: %s" % (port, bridge, device.name, ports))   
+   if ports:
+    logger.debug("Interface %s was found in bridge %s on device %s" % (port, bridge, device.name))   
+    return 1
+   else:
+    logger.debug("Interface %s was not found in bridge %s on device %s" % (port, bridge, device.name))
+    return 0
+  else:
+   logger.warning("Unknown device type %s for %s" % (device.type, device.name))
+   return 0
+ except Exception as e:
+  logger.error("[isPortInBridge] Unexpected error: %s" % e)
   return -1
 
 def banner():

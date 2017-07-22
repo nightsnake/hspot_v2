@@ -1,0 +1,4 @@
+DEBUG [2017-04-27 22:12:16,238] Starting program with option ['-n', 'server', '--keyca', '--keytype=server', '--cfgtype=server']
+ERROR [2017-04-27 22:12:16,238] Unknown option: option --keyca not recognized
+DEBUG [2017-04-27 22:12:30,160] Starting program with option ['-n', 'server', '--keytype=server']
+ERROR [2017-04-27 22:12:30,290] Unknown config type:  or ovpn srv IP is not defined. Exiting...

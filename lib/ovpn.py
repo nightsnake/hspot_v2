@@ -217,10 +217,10 @@ def generate_certificate(config_cert, ca, cakey, name):
     cert.sign(cakey, config_cert['hashalgorithm'])
     return req, cert, key
 
-def gen_ca(cert_cfg, name, ovpn_path, logger):
+def gen_ca(cert_cfg, name, client_key_path, logger):
     cert_cfg['cert_filename'] = "ca.pem"
     cert_cfg['cert_key'] = "ca.key"
-    os.chdir( ovpn_path )
+    os.chdir( client_key_path )
     ca_cert, ca_key = build_ca(cert_cfg, name)
     return ca_cert, ca_key
 
@@ -229,20 +229,20 @@ def gen_cert(cert_cfg, certype, name, ovpn_path, logger):
     ca_key = ''
     cert_cert = ''
     cert_key = ''
-    client_key_path = ovpn_path + '/easy-rsa/keys/'
+    client_key_path = ovpn_path + '/keys/'
     retval = os.getcwd()
 
     # Build the Server and Client CA (if they do not already exist)
     if certype == 'ca':
-     ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path, logger)
+     ca_cert, ca_key = gen_ca(cert_cfg, 'CA', client_key_path, logger)
 #     sys.stdout.write("\n")
     # Build the server and client certificate (signed by the above CAs)
     elif certype == 'server' or certype == 'client':
-      ca_cert, ca_key = gen_ca(cert_cfg, 'CA', ovpn_path, logger)
+      ca_cert, ca_key = gen_ca(cert_cfg, 'CA', client_key_path, logger)
       if certype == 'server':
        cert_cfg['cert_filename'] = 'server' + ".pem"
        cert_cfg['cert_key'] = 'server' + ".key"
-       os.chdir( ovpn_path )
+       os.chdir( client_key_path )
       else:
        cert_cfg['cert_filename'] = name + ".pem"
        cert_cfg['cert_key'] = name + ".key"

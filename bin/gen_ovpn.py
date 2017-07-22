@@ -47,7 +47,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
     ovpn_path = ovpn_cfg['ovpn_path']
     ovpn_srv = ovpn_cfg['ovpn_srv']
     key_outpath = ovpn_cfg['key_outpath']
-    client_key_path = ovpn_path + '/easy-rsa/keys/'
+    client_key_path = ovpn_path + '/keys/'
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
 
     if (certype == 'server' or certype == 'client') and certname:
@@ -109,7 +109,7 @@ def main(argv, logger):
     ovpn_srv = ovpn_cfg['ovpn_srv']
     key_outpath = ovpn_cfg['key_outpath']
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
-    client_key_path = ovpn_path + '/easy-rsa/keys/'
+    client_key_path = ovpn_path + '/keys/'
 
     try:
 ###@If verbose defined, show logs on screen
