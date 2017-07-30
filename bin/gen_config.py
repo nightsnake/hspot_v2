@@ -140,10 +140,16 @@ def genFetcher (files, name, ftp_url, user, password, fetch_path, in_path, logge
     except Exception as e:
      logger.warning("Failed to generate fetching list: %s" % e)
 
-def makeConfig(id, logger):
+def makeConfig(**kwargs):
     """
     Config generator for Mikrotik
     """
+#Check ID is defined
+    try:
+      id
+    except NameError:
+      id = false
+     
 #Describe paths
     skel_path = "../etc/skel/"
     etc_path = "../etc/"
@@ -161,30 +167,34 @@ def makeConfig(id, logger):
     skel_files = filelist(skel_full_path)
 #Load hotspot by ID
     a = devAction()
-    spot = a.devGetById(id)
+    if id:
+     spot = a.devGetById(id)
+    else:
+     spot = a.devGetFirstNew()
+
     if not spot:
       logger.warning("Failed to create config: hspot id not found")
       sys.exit(1)
-    if spot.type == 'mkt': #check AP type
+
+    if spot.type == 'mkt': #check HS type
       logger.debug("Prepare settings...")
       key_path, ftp_url, cfg = getHspotSettings(srv_cfg, spot)
       logger.debug("Making config files...")      
       setConfigFiles(spot, skel_files, cfg, skel_full_path, key_path, spot.name, logger)
 
-#### Marking device as 'new'
-#    a.devSetNew(spot.id)
 #### Make fetcher.cfg
       logger.debug("Making fetcher file...")
       genFetcher(skel_files, spot.name, cfg['url'], cfg['ftp_user'], cfg['ftp_password'], key_path, etc_full_path, logger)
 #### Make openvpn files
       logger.debug("Making openvpn files...")
+##@@ToDo: replace server address to var
       ovpn_generator(spot.name, 'client', 'client', '10.0.0.1', spot.ip, logger)
 #### Create link for customer
       try:
         cfg_url = "%s/%s/fetcher.zip" % (ftp_url, spot.name)
         logger.debug("CFG url is %s" % cfg_url)
         a.devSetConfigURL(id, cfg_url)
-#### Marking device as 'configured'
+#### Marking device as 'configured' and 'old'
         a.devSetDone(spot.id)
         a.devUnSetNew(spot.id)
       except Exception as e:
@@ -200,7 +210,7 @@ if __name__ == "__main__":
      try:
       id = sys.argv[1]
       logger.debug("Hotspot ID: " + id)
-      makeConfig(id, logger)
+      makeConfig(id=id, logger=logger)
      except Exception as e:
       logger.warning("Unexpected error: %s: %s" % (sys.argv[0], e))
       sys.stderr.write("Error: %s\n" % e)
@@ -208,5 +218,6 @@ if __name__ == "__main__":
      else:	  
       sys.exit(0)
     else:
-     sys.stdout.write("You have to define device id: %s <id>\n" % sys.argv[0])
+#     sys.stdout.write("You have to define device id: %s <id>\n" % sys.argv[0])
+     makeConfig(logger=logger)
      sys.exit(1)
