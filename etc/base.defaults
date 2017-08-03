@@ -1,0 +1,9 @@
+[DB]
+hostname = localhost
+dbname = dbname
+dbuser = dbname
+dbpass = dbpass
+dbhost = localhost
+dbport = 3306
+
+

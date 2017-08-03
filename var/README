@@ -1,0 +1,19 @@
+##----------------------------------------------------------##
+# HotSpot system made by Snake                               #
+# QuickStart config files                                    #
+# Copyright 2017 (c) Snake, <snake@nixman.info> @night_snake #
+##----------------------------------------------------------##
+
+1. Hotspot
+ 1.1 Open WinBox and connect to your Mikrotik
+ 1.2 Copy default.rsc and fetcher.cfg to your device
+ 1.3 Run in terminal: "/system reset-configuration keep-users=no no-defaults=yes skip-backup=yes run-after-reset=default.rsc"
+
+ After reset, login again and open terminal
+
+ 1.4 Run command: "/import fetcher.cfg"
+
+2. Access point
+ 2.1 Open WinBox and connect to your Mikrotik
+ 2.2 Copy default_ap.rsc to your device
+ 2.3 Run in terminal: "/system reset-configuration keep-users=no no-defaults=yes skip-backup=yes run-after-reset=default_ap.rsc"
