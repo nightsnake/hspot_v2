@@ -47,12 +47,13 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
     ovpn_path = ovpn_cfg['ovpn_path']
     ovpn_srv = ovpn_cfg['ovpn_srv']
     key_outpath = ovpn_cfg['key_outpath']
+    key_path = ovpn_path + '/keys/'
     client_key_path = ovpn_path + '/keys/'
     DH_PARAM_SIZE = ovpn_cfg['DH_PARAM_SIZE']
 
     if (certype == 'server' or certype == 'client') and certname:
      logger.debug("Make cert  %s" % certname)
-     os.chdir( ovpn_path )
+     os.chdir( key_path )
      # Now build ta.key and dh params if they do not already exist
      build_openssl_extra(DH_PARAM_SIZE)
      # Make a certconfig
@@ -164,7 +165,7 @@ def main(argv, logger):
       instructions()
     # Make configs for client and server
     if cfgtype == 'server':
-     os.chdir( ovpn_path )
+     os.chdir( client_key_path )
      gen_server_config(DH_PARAM_SIZE)
     elif cfgtype == 'client' and srv_ip:
      tmp_dir = retval + '/../tmp'

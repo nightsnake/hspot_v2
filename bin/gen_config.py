@@ -148,7 +148,7 @@ def makeConfig(**kwargs):
     try:
       id
     except NameError:
-      id = false
+      id = False
      
 #Describe paths
     skel_path = "../etc/skel/"

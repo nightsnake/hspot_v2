@@ -102,6 +102,10 @@ class devAction():
         def devGetNew(self):
             newspot = session.query(devTable).filter_by(new=1).all()
             return newspot
+#Get first device with new=1
+        def devGetFirstNew(self):
+            newspot = session.query(devTable).filter_by(new=1).first()
+            return newspot
 #Get list with all devices
         def devGetAll(self):
             hspots = session.query(devTable).all()

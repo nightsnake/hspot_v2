@@ -218,7 +218,7 @@ def generate_certificate(config_cert, ca, cakey, name):
     return req, cert, key
 
 def gen_ca(cert_cfg, name, client_key_path, logger):
-    cert_cfg['cert_filename'] = "ca.pem"
+    cert_cfg['cert_filename'] = "ca.crt"
     cert_cfg['cert_key'] = "ca.key"
     os.chdir( client_key_path )
     ca_cert, ca_key = build_ca(cert_cfg, name)
