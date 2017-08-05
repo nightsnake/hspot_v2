@@ -218,6 +218,5 @@ if __name__ == "__main__":
      else:	  
       sys.exit(0)
     else:
-#     sys.stdout.write("You have to define device id: %s <id>\n" % sys.argv[0])
      makeConfig(logger=logger)
      sys.exit(1)

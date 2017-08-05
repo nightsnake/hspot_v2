@@ -32,7 +32,7 @@ def certcfg(cert_name, cert_type, logger):
  cert_cfg['commonName'] = "%s" % (cert_name)
 # cert_cfg['serial'] = 12345999 #need to add random numbers generator
  cert_cfg['serial'] = int(random.random() * 100000000)
- cert_cfg['cert_filename'] = cert_name + ".pem"
+ cert_cfg['cert_filename'] = cert_name + ".crt"
  cert_cfg['cert_key'] = cert_name + ".key"
  
  return cert_cfg    
@@ -240,11 +240,11 @@ def gen_cert(cert_cfg, certype, name, ovpn_path, logger):
     elif certype == 'server' or certype == 'client':
       ca_cert, ca_key = gen_ca(cert_cfg, 'CA', client_key_path, logger)
       if certype == 'server':
-       cert_cfg['cert_filename'] = 'server' + ".pem"
+       cert_cfg['cert_filename'] = 'server' + ".crt"
        cert_cfg['cert_key'] = 'server' + ".key"
        os.chdir( client_key_path )
       else:
-       cert_cfg['cert_filename'] = name + ".pem"
+       cert_cfg['cert_filename'] = name + ".crt"
        cert_cfg['cert_key'] = name + ".key"
        os.chdir( client_key_path )
       cert_cert, cert_key = build_cert(cert_cfg, ca_cert, ca_key, certype)
@@ -261,12 +261,11 @@ def gen_server_config(DH_PARAM_SIZE):
         server_config.write("port 1194\n")
         server_config.write("proto tcp\n")
         server_config.write("dev tun\n")
-        server_config.write("ca ca.pem\n")
-        server_config.write("cert server.pem\n")
+        server_config.write("ca ca.crt\n")
+        server_config.write("cert server.crt\n")
         server_config.write("key server.key\n")
         server_config.write("dh dh"+str(DH_PARAM_SIZE)+".pem\n")
         server_config.write("server 10.0.0.0 255.0.0.0\n")
-#        server_config.write("topology net30\n")
         server_config.write("ifconfig-pool-persist ipp.txt\n")
         server_config.write("client-config-dir /etc/openvpn/staticlients\n")		
         server_config.write("keepalive 10 120\n")
@@ -292,10 +291,10 @@ def gen_client_config(name, srv_ip, logger):
         client_config.write("nobind\n")
         client_config.write("persist-key\n")
         client_config.write("persist-tun\n")
-        client_config.write("ca ca.pem\n")
+        client_config.write("ca ca.crt\n")
         client_config.write("cert ")
         client_config.write(name)
-        client_config.write(".pem\n")
+        client_config.write(".crt\n")
         client_config.write("key ")
         client_config.write(name)
         client_config.write(".key\n")
