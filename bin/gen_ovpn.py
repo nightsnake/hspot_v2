@@ -69,7 +69,7 @@ def ovpn_generator(certname, certype, cfgtype, srv_ip, cli_ip, logger):
       inpath = client_key_path
       outpath = key_outpath + '/' + certname
       logger.debug("Copy keys to directory with user configs. In: %s, out: %s" % (inpath, outpath))
-      copyFile(certname + '.pem', inpath, outpath)
+      copyFile(certname + '.crt', inpath, outpath)
       copyFile(certname + '.key', inpath, outpath)
 
     elif certype:
